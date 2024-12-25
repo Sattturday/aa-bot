@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 import { Telegraf, Markup, Context } from 'telegraf';
-import { buttonKeys, buttons, messages } from './messages';
+import { urls, buttonKeys, buttons, messages } from './messages';
 
 dotenv.config();
 
@@ -43,9 +43,20 @@ const sendWelcomeMessage = async (ctx: Context) => {
 
 🤖 Я бот содружества "Анонимные Алкоголики". Теперь твоя очередь представиться, кто ты?
 
-👇 Нажми на кнопку ниже 👇`;
+Нажми на кнопку ниже 👇👇👇`;
 
-    await ctx.reply(message, Markup.inlineKeyboard(buttons.welcome));
+    // Создание клавиатуры
+    const keyboard = Markup.inlineKeyboard(buttons.welcome);
+
+    // Отправка изображения вместе с приветственным сообщением
+    await ctx.replyWithPhoto(
+      { url: urls.welcome }, // Замените на URL вашего изображения
+      {
+        caption: message,
+        reply_markup: keyboard.reply_markup // Используем созданную клавиатуру
+      }
+    );
+
     // await forwardMessageToAdmin(ctx, 'welcome');
   } catch (error) {
     console.error('Ошибка при отправке приветственного сообщения:', error);
@@ -79,6 +90,20 @@ buttonKeys.welcome.forEach(key => {
 
 // Регистрация обработчиков для кнопок Новичок
 buttonKeys.newbie.forEach(key => {
+  bot.action(key, async ctx => {
+    try {
+      await handleButtonAction(ctx, key);
+    } catch (error) {
+      console.error(
+        `Ошибка при регистрации обработчика для кнопки ${key}:`,
+        error,
+      );
+    }
+  });
+});
+
+// Регистрация обработчиков для кнопок Вопрос - ответ
+buttonKeys.faq.forEach(key => {
   bot.action(key, async ctx => {
     try {
       await handleButtonAction(ctx, key);
