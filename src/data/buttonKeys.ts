@@ -2,27 +2,23 @@ export const buttonKeys = {
   welcome: ['newbie', 'participant', 'relative', 'ask_question'],
   newbie: [
     'want_to_quit',
-    'about_aa',
+    'newbie_about_aa',
     'what_to_expect',
-    'literature',
-    'group_schedule',
+    'newbie_literature',
+    'newbie_group_schedule',
     'faq',
-    'steps'
   ],
+  about_aa: ['steps'],
   participant: [
-    'group_schedule',
+    'participant_group_schedule',
     'service',
     'step_11_am',
     'step_11_pm',
-    'literature',
+    'participant_literature',
     'daily',
     // 'counter',
   ],
-  relative: [
-    'about_aa',
-    'open_meeting',
-    'alanon'
-  ],
+  relative: ['relative_about_aa', 'open_meeting', 'alanon'],
   faq: [
     'answer_1',
     'answer_2',
@@ -46,7 +42,5 @@ export const buttonKeys = {
     'group_naberezhnaya',
     'group_novaya',
     'group_irek',
-  ]
+  ],
 };
-
-

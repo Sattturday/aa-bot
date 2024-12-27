@@ -1,6 +1,10 @@
 import * as dotenv from 'dotenv';
 import { Telegraf, Markup, Context } from 'telegraf';
-import { handleButtonAction, handleButtonActionWithImage, handleGroupInfo } from './utils/utils';
+import {
+  handleButtonAction,
+  handleButtonActionWithImage,
+  handleGroupInfo,
+} from './utils/utils';
 import { urls } from './data/urls';
 import { buttonKeys } from './data/buttonKeys';
 import { buttons } from './data/buttons';
@@ -38,15 +42,15 @@ const forwardMessageToAdmin = async (ctx: Context, action: string) => {
 };
 
 // Создаем объект для хранения истории навигации
-const userNavigationStack: { [userId: string]: string[] } = {};
+let userNavigationStack: { [userId: string]: string[] } = {};
 
 // Функция для добавления состояния в стек
 const pushToStack = (userId: string, state: string) => {
-  console.log('add state: ', state);
   if (!userNavigationStack[userId]) {
     userNavigationStack[userId] = [];
   }
   userNavigationStack[userId].push(state);
+  console.log('userNavigationStack: ', userNavigationStack);
 };
 
 // Функция для извлечения последнего состояния из стека
@@ -74,8 +78,8 @@ const sendWelcomeMessage = async (ctx: Context) => {
       { url: urls.welcome },
       {
         caption: message,
-        reply_markup: keyboard.reply_markup
-      }
+        reply_markup: keyboard.reply_markup,
+      },
     );
 
     // await forwardMessageToAdmin(ctx, 'welcome');
@@ -104,55 +108,82 @@ buttonKeys.welcome.forEach(key => {
 // Регистрация обработчиков для кнопок Новичок
 buttonKeys.newbie.forEach(key => {
   bot.action(key, async ctx => {
-    console.log('key: ', key);
     const userId: number | string = ctx.from?.id || 'Не указано';
-    pushToStack(userId.toString(), 'newbie');
+    pushToStack(userId.toString(), 'newbie'); // Добавляем состояние "newbie"
 
-    if (key === 'group_schedule') {
-      console.log("1111111111111111")
-      try {
-        await handleButtonActionWithImage(ctx, 'group_schedule', urls.group_schedule);
-      } catch (error) {
-        console.error(
-          `Ошибка при регистрации обработчика для кнопки 'group_schedule':`,
-          error,
+    try {
+      if (key === 'newbie_group_schedule') {
+        console.log('Открытие расписания для новичка');
+        await handleButtonActionWithImage(
+          ctx,
+          'group_schedule',
+          urls.group_schedule,
         );
-      }
-    } else {
-      console.log("2222222222222222222")
-      try {
+      } else if (key === 'newbie_about_aa' || key === 'newbie_literature') {
+        await handleButtonAction(ctx, key.slice(7));
+      } else {
         await handleButtonAction(ctx, key);
-      } catch (error) {
-        console.error(
-          `Ошибка при регистрации обработчика для кнопки ${key}:`,
-          error,
-        );
       }
+    } catch (error) {
+      console.error(
+        `Ошибка при регистрации обработчика для кнопки ${key}:`,
+        error,
+      );
     }
   });
 });
 
-// Регистрация обработчиков для кнопок Расписание групп
-// bot.action('group_schedule', async ctx => {
-//   try {
-//     // const userId: number | string = ctx.from?.id || 'Не указано';
-//     // pushToStack(userId.toString(), 'group_schedule');
+// Регистрация обработчиков для кнопок Член АА
+buttonKeys.participant.forEach(key => {
+  bot.action(key, async ctx => {
+    const userId: number | string = ctx.from?.id || 'Не указано';
+    pushToStack(userId.toString(), 'participant'); // Добавляем состояние "participant"
 
-//     await handleButtonActionWithImage(ctx, 'group_schedule', urls.group_schedule);
-//   } catch (error) {
-//     console.error(
-//       `Ошибка при регистрации обработчика для кнопки 'group_schedule':`,
-//       error,
-//     );
-//   }
-// });
+    try {
+      if (key === 'participant_group_schedule') {
+        console.log('Открытие расписания для участника');
+        await handleButtonActionWithImage(
+          ctx,
+          'group_schedule',
+          urls.group_schedule,
+        );
+      } else if (key === 'participant_literature') {
+        await handleButtonAction(ctx, key.slice(12));
+      } else {
+        await handleButtonAction(ctx, key);
+      }
+    } catch (error) {
+      console.error(
+        `Ошибка при регистрации обработчика для кнопки ${key}:`,
+        error,
+      );
+    }
+  });
+});
 
 // Регистрация обработчиков для кнопок Вопрос - ответ
 buttonKeys.faq.forEach(key => {
   bot.action(key, async ctx => {
     try {
-      // const userId: number | string = ctx.from?.id || 'Не указано';
-      // pushToStack(userId.toString(), 'faq');
+      const userId: number | string = ctx.from?.id || 'Не указано';
+      pushToStack(userId.toString(), 'faq');
+
+      await handleButtonAction(ctx, key);
+    } catch (error) {
+      console.error(
+        `Ошибка при регистрации обработчика для кнопки ${key}:`,
+        error,
+      );
+    }
+  });
+});
+
+// Регистрация обработчиков для кнопок О программе АА
+buttonKeys.about_aa.forEach(key => {
+  bot.action(key, async ctx => {
+    try {
+      const userId: number | string = ctx.from?.id || 'Не указано';
+      pushToStack(userId.toString(), 'about_aa');
 
       await handleButtonAction(ctx, key);
     } catch (error) {
@@ -168,8 +199,8 @@ buttonKeys.faq.forEach(key => {
 buttonKeys.group_schedule.forEach(key => {
   bot.action(key, async ctx => {
     try {
-      // const userId: number | string = ctx.from?.id || 'Не указано';
-      // pushToStack(userId.toString(), 'group_schedule');
+      const userId: number | string = ctx.from?.id || 'Не указано';
+      pushToStack(userId.toString(), 'group_schedule');
 
       await handleGroupInfo(ctx, key);
     } catch (error) {
@@ -181,44 +212,18 @@ buttonKeys.group_schedule.forEach(key => {
   });
 });
 
-// Регистрация обработчиков для кнопок Член АА
-buttonKeys.participant.forEach(key => {
-  bot.action(key, async ctx => {
-    const userId: number | string = ctx.from?.id || 'Не указано';
-    pushToStack(userId.toString(), 'participant');
-
-    if (key === 'group_schedule') {
-      console.log("333333333")
-      try {
-        await handleButtonActionWithImage(ctx, 'group_schedule', urls.group_schedule);
-      } catch (error) {
-        console.error(
-          `Ошибка при регистрации обработчика для кнопки 'group_schedule':`,
-          error,
-        );
-      }
-    } else {
-      console.log("4444444444444")
-      try {
-        await handleButtonAction(ctx, key);
-      } catch (error) {
-        console.error(
-          `Ошибка при регистрации обработчика для кнопки ${key}:`,
-          error,
-        );
-      }
-    }
-  });
-});
-
 // Регистрация обработчиков для кнопок Родственник
 buttonKeys.relative.forEach(key => {
   bot.action(key, async ctx => {
     try {
-      // const userId: number | string = ctx.from?.id || 'Не указано';
-      // pushToStack(userId.toString(), 'relative');
+      const userId: number | string = ctx.from?.id || 'Не указано';
+      pushToStack(userId.toString(), 'relative');
 
-      await handleButtonAction(ctx, key);
+      if (key === 'relative_about_aa') {
+        await handleButtonAction(ctx, key.slice(9));
+      } else {
+        await handleButtonAction(ctx, key);
+      }
     } catch (error) {
       console.error(
         `Ошибка при регистрации обработчика для кнопки ${key}:`,
@@ -228,19 +233,22 @@ buttonKeys.relative.forEach(key => {
   });
 });
 
-// Обработка нажатий на кнопку "Назад" для возврата к приветствию
+// Обработка нажатий на кнопку "Назад" для возврата к предыдущему сообщению
 bot.action('back', async ctx => {
   try {
     const previousState = popFromStack(ctx.from.id.toString()); // Извлекаем предыдущее состояние
     if (previousState) {
-      console.log('previousState: ', previousState);
       // В зависимости от предыдущего состояния, отправляем соответствующее сообщение
       if (previousState === 'welcome') {
         await ctx.deleteMessage();
+        userNavigationStack = {};
         await sendWelcomeMessage(ctx);
-      } else if (previousState === 'newbie') {
-        await handleButtonAction(ctx, 'newbie');
+      } else {
+        await handleButtonAction(ctx, previousState);
       }
+    } else {
+      await ctx.deleteMessage();
+      await sendWelcomeMessage(ctx);
     }
   } catch (error) {
     console.error('Ошибка при обработке кнопки "Назад":', error);

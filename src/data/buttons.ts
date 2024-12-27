@@ -1,6 +1,6 @@
-import { Markup } from "telegraf";
-import { InlineKeyboardButton } from "telegraf/typings/core/types/typegram";
-import { urls } from "./urls";
+import { Markup } from 'telegraf';
+import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram';
+import { urls } from './urls';
 
 type ButtonRow = InlineKeyboardButton[];
 type Buttons = {
@@ -14,15 +14,15 @@ export const buttons: Buttons = {
     [Markup.button.callback('😊 Член АА', 'participant')],
     [Markup.button.callback('❤️ Родственник / друг алкоголика', 'relative')],
     [Markup.button.url('❓ Хочу задать вопрос', urls.question)],
-    [Markup.button.url('⚙️ Техподдержка бота', urls.support)]
+    [Markup.button.url('⚙️ Техподдержка бота', urls.support)],
   ],
   // Приветствиe --> Новичок
   newbie: [
     [Markup.button.callback('🙏 Хочу бросить пить', 'want_to_quit')],
-    [Markup.button.callback('🖐 О программе АА', 'about_aa')],
+    [Markup.button.callback('🖐 О программе АА', 'newbie_about_aa')],
     [Markup.button.callback('🗣 Что ждать от собрания', 'what_to_expect')],
-    [Markup.button.callback('📚 Литература', 'literature')],
-    [Markup.button.callback('🗓 Расписание групп', 'group_schedule')],
+    [Markup.button.callback('📚 Литература', 'newbie_literature')],
+    [Markup.button.callback('🗓 Расписание групп', 'newbie_group_schedule')],
     [Markup.button.callback('❓ Вопрос - ответ', 'faq')],
     [Markup.button.callback('⬅️ Назад', 'back')],
   ],
@@ -79,7 +79,7 @@ export const buttons: Buttons = {
 
     [Markup.button.callback('⬅️ Назад', 'back')],
   ],
-  // Приветствиe --> Новичок --> Вопрос - ответ --> ... 
+  // Приветствиe --> Новичок --> Вопрос - ответ --> ...
   answer_1: [[Markup.button.callback('⬅️ Назад', 'back')]],
   answer_2: [[Markup.button.callback('⬅️ Назад', 'back')]],
   answer_3: [[Markup.button.callback('⬅️ Назад', 'back')]],
@@ -94,14 +94,19 @@ export const buttons: Buttons = {
 
   // Приветствиe --> Участник
   participant: [
-    [Markup.button.callback('🗓 Расписание групп', 'group_schedule')],
+    [
+      Markup.button.callback(
+        '🗓 Расписание групп',
+        'participant_group_schedule',
+      ),
+    ],
     [Markup.button.callback('🙏 Хочу взять служение', 'service')],
     [Markup.button.url('🖐 Ежедневные размышления', urls.daily)],
     [Markup.button.callback('☀️ 11 шаг (утро)', 'step_11_am')],
     [Markup.button.callback('🌙 11 шаг (вечер)', 'step_11_pm')],
-    [Markup.button.callback('📚 Литература', 'literature')],
+    [Markup.button.callback('📚 Литература', 'participant_literature')],
 
-    [Markup.button.callback('⬅️ Назад', 'back')]
+    [Markup.button.callback('⬅️ Назад', 'back')],
   ],
   // Приветствие --> Участник --> Хочу взять служение
   service: [[Markup.button.callback('⬅️ Назад', 'back')]],
@@ -111,15 +116,20 @@ export const buttons: Buttons = {
   step_11_pm: [[Markup.button.callback('⬅️ Назад', 'back')]],
   // Приветствиe --> Родственник
   relative: [
-    [Markup.button.callback('🖐 О программе АА', 'about_aa')],
-    [Markup.button.callback('👥 Посетить открытое собрание АА', 'open_meeting')],
+    [Markup.button.callback('🖐 О программе АА', 'relative_about_aa')],
+    [
+      Markup.button.callback(
+        '👥 Посетить открытое собрание АА',
+        'open_meeting',
+      ),
+    ],
     [Markup.button.callback('🗓 Расписание Ал-Анон', 'alanon')],
-    [Markup.button.callback('⬅️ Назад', 'back')]
+    [Markup.button.callback('⬅️ Назад', 'back')],
   ],
   // Приветствие --> Родственник --> Посетить открытое собрание АА
   open_meeting: [
     [Markup.button.url('🗓 Даты открытых собраний', urls.open_meeting)],
-    [Markup.button.callback('⬅️ Назад', 'back')]
+    [Markup.button.callback('⬅️ Назад', 'back')],
   ],
   // Приветствие --> Родственник --> Ал-Анон
   alanon: [[Markup.button.callback('⬅️ Назад', 'back')]],
