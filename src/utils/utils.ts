@@ -54,12 +54,12 @@ export const sendGroupInfo = (key: string) => {
 📞 ${group.phone}
 
 📍 ${group.address}
-👀 ${group.description}
+👀 ${group.description ? group.description : '(нет подробностей)'}
 
 🗓️ Расписание:
 ${group.schedule.map(s => `${s.days.join(', ')} — ${s.time}`).join('\n')}
 
-🗣 ${group.notes ? group.notes : ''}
+${group.notes ? '🗣 ' + group.notes : ''}
     `;
     return message;
   } else {

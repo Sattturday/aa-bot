@@ -241,7 +241,7 @@ bot.action('back', async ctx => {
       // В зависимости от предыдущего состояния, отправляем соответствующее сообщение
       if (previousState === 'welcome') {
         await ctx.deleteMessage();
-        userNavigationStack = {};
+        userNavigationStack[ctx.from.id.toString()].length = 0;
         await sendWelcomeMessage(ctx);
       } else {
         await handleButtonAction(ctx, previousState);
