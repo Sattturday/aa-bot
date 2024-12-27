@@ -5,18 +5,23 @@ export const buttonKeys = {
     'about_aa',
     'what_to_expect',
     'literature',
-    // 'group_schedule',
+    'group_schedule',
     'faq',
     'steps'
   ],
   participant: [
-    // 'group_schedule',
+    'group_schedule',
     'service',
     'step_11_am',
     'step_11_pm',
     'literature',
-    // 'daily',
+    'daily',
     // 'counter',
+  ],
+  relative: [
+    'about_aa',
+    'open_meeting',
+    'alanon'
   ],
   faq: [
     'answer_1',

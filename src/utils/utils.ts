@@ -111,5 +111,3 @@ export function generateGroupScheduleMessage(groups: Groups): string {
 
   return header + groupMessages;
 };
-
-

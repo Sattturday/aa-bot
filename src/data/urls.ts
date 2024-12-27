@@ -4,5 +4,9 @@ export const urls = {
   hochu_brosit: 'https://21.aarussia.ru/hochu-brosit',
   about_aa: 'https://21.aarussia.ru/about',
   o_sobranii: 'https://21.aarussia.ru/chto-na-sobranii',
-  literatura: 'https://aa-online.ru/literatura-aa/'
+  literatura: 'https://aa-online.ru/literatura-aa/',
+  daily: 'https://t.me/daylybot',
+  question: 'https://t.me/AAchuvashii',
+  support: 'https://t.me/+HaoOC7NG0vE2Nzdi',
+  open_meeting: 'https://21.aarussia.ru/calendar/january'
 }
