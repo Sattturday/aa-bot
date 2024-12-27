@@ -1,6 +1,9 @@
 import * as dotenv from 'dotenv';
 import { Telegraf, Markup, Context } from 'telegraf';
-import { urls, buttonKeys, buttons, messages } from './messages';
+import { handleButtonAction, handleButtonActionWithImage, handleGroupInfo } from './utils/utils';
+import { urls } from './data/urls';
+import { buttonKeys } from './data/buttonKeys';
+import { buttons } from './data/buttons';
 
 dotenv.config();
 
@@ -45,32 +48,19 @@ const sendWelcomeMessage = async (ctx: Context) => {
 
 Нажми на кнопку ниже 👇👇👇`;
 
-    // Создание клавиатуры
     const keyboard = Markup.inlineKeyboard(buttons.welcome);
 
-    // Отправка изображения вместе с приветственным сообщением
     await ctx.replyWithPhoto(
-      { url: urls.welcome }, // Замените на URL вашего изображения
+      { url: urls.welcome },
       {
         caption: message,
-        reply_markup: keyboard.reply_markup // Используем созданную клавиатуру
+        reply_markup: keyboard.reply_markup
       }
     );
 
     // await forwardMessageToAdmin(ctx, 'welcome');
   } catch (error) {
     console.error('Ошибка при отправке приветственного сообщения:', error);
-  }
-};
-
-// Универсальный обработчик для кнопок
-const handleButtonAction = async (ctx: Context, key: string) => {
-  try {
-    await ctx.deleteMessage();
-    await ctx.reply(messages[key], Markup.inlineKeyboard(buttons[key]));
-    // await forwardMessageToAdmin(ctx, key);
-  } catch (error) {
-    console.error(`Ошибка при обработке действия кнопки ${key}:`, error);
   }
 };
 
@@ -104,6 +94,46 @@ buttonKeys.newbie.forEach(key => {
 
 // Регистрация обработчиков для кнопок Вопрос - ответ
 buttonKeys.faq.forEach(key => {
+  bot.action(key, async ctx => {
+    try {
+      await handleButtonAction(ctx, key);
+    } catch (error) {
+      console.error(
+        `Ошибка при регистрации обработчика для кнопки ${key}:`,
+        error,
+      );
+    }
+  });
+});
+
+// Регистрация обработчиков для кнопок Расписание групп
+bot.action('group_schedule', async ctx => {
+  try {
+    await handleButtonActionWithImage(ctx, 'group_schedule', urls.group_schedule);
+  } catch (error) {
+    console.error(
+      `Ошибка при регистрации обработчика для кнопки 'group_schedule':`,
+      error,
+    );
+  }
+});
+
+// Регистрация обработчиков для кнопок Группа ...
+buttonKeys.group_schedule.forEach(key => {
+  bot.action(key, async ctx => {
+    try {
+      await handleGroupInfo(ctx, key);
+    } catch (error) {
+      console.error(
+        `Ошибка при регистрации обработчика для кнопки ${key}:`,
+        error,
+      );
+    }
+  });
+});
+
+// Регистрация обработчиков для кнопок Член АА
+buttonKeys.participant.forEach(key => {
   bot.action(key, async ctx => {
     try {
       await handleButtonAction(ctx, key);
