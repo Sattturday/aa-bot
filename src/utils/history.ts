@@ -27,23 +27,27 @@ const writeHistoryToFile = async (bot: Telegraf<Context<Update>>) => {
   let fileContent = '📊 Статистика взаимодействия:\n\n';
 
   for (const userId in userNavigationHistory) {
-    const userActions = userNavigationHistory[userId];
-    const chat = await bot.telegram.getChat(userId);
+    try {
+      const userActions = userNavigationHistory[userId];
+      const chat = await bot.telegram.getChat(userId);
 
-    if (chat && chat.type === 'private') {
-      const userName = chat.first_name || 'Не указано';
-      const userUsername = chat.username ? `@${chat.username}` : 'Не указано';
+      if (chat && chat.type === 'private') {
+        const userName = chat.first_name || 'Не указано';
+        const userUsername = chat.username ? `@${chat.username}` : 'Не указано';
 
-      fileContent += `👤 Пользователь: ${userName}\n`;
-      fileContent += `Username: ${userUsername}\n`;
-      fileContent += `ID: ${userId}\n`;
-      fileContent += `История взаимодействия:\n`;
+        fileContent += `👤 Пользователь: ${userName}\n`;
+        fileContent += `Username: ${userUsername}\n`;
+        fileContent += `ID: ${userId}\n`;
+        fileContent += `История взаимодействия:\n`;
 
-      userActions.forEach(({ time, action }) => {
-        fileContent += `🕒 ${time} - ${action}\n`;
-      });
+        userActions.forEach(({ time, action }) => {
+          fileContent += `🕒 ${time} - ${action}\n`;
+        });
 
-      fileContent += '\n';
+        fileContent += '\n';
+      }
+    } catch (error) {
+      console.error(`Ошибка при обработке userId ${userId}:`, error);
     }
   }
 

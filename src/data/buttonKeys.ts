@@ -1,4 +1,5 @@
 export const buttonKeys = {
+  start: ['welcome'],
   welcome: ['newbie', 'participant', 'relative', 'ask_question'],
   newbie: [
     'want_to_quit',

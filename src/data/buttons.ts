@@ -8,6 +8,8 @@ type Buttons = {
 };
 
 export const buttons: Buttons = {
+  // Старт
+  start: [[Markup.button.callback('Продолжить ➡️', 'welcome')]],
   // Приветствие
   welcome: [
     [Markup.button.callback('🆕 Новичок', 'newbie')],
@@ -46,7 +48,8 @@ export const buttons: Buttons = {
   ],
   // Приветствиe --> Новичок --> Литература
   literature: [
-    [Markup.button.url('📚 Литература Содружества АА', urls.literatura)],
+    [Markup.button.url('📚 "Электронная библиотека АА', urls.literatura)],
+    [Markup.button.url('🛍 "Заказать литературу АА', urls.buy_literature)],
     [Markup.button.callback('⬅️ Назад', 'back')],
   ],
   // Приветствиe --> Новичок --> Расписание групп

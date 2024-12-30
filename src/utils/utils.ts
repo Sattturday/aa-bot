@@ -3,6 +3,17 @@ import { messages } from '../data/messages';
 import { Groups, groups } from '../data/groups';
 import { buttons } from '../data/buttons';
 
+// Главное меню
+export const sendWelcomeMessage = async (ctx: Context) => {
+  try {
+    const message = 'Выбери подходящий вариант и нажми на кнопку ниже 👇';
+
+    await ctx.reply(message, Markup.inlineKeyboard(buttons.welcome));
+  } catch (error) {
+    console.error('Ошибка при отправке приветственного сообщения:', error);
+  }
+};
+
 // Универсальный обработчик для кнопок
 export const handleButtonAction = async (ctx: Context, key: string) => {
   try {
