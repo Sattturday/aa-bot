@@ -61,11 +61,19 @@ export const sendStatisticsToAdmin = async (
   tgId: string,
 ) => {
   try {
-    const filePath = await writeHistoryToFile(bot);
-    await bot.telegram.sendDocument(tgId, { source: filePath });
-    // Очистка истории после успешной отправки
-    userNavigationHistory = {};
-    console.log('История взаимодействий очищена.');
+    // Check if the history is empty
+    if (Object.keys(userNavigationHistory).length === 0) {
+      await bot.telegram.sendMessage(tgId, 'Никто не приходил.');
+      console.log(
+        'История пуста, отправлено сообщение о том, что никто не приходил.',
+      );
+    } else {
+      const filePath = await writeHistoryToFile(bot);
+      await bot.telegram.sendDocument(tgId, { source: filePath });
+      // Очистка истории после успешной отправки
+      userNavigationHistory = {};
+      console.log('История взаимодействий очищена.');
+    }
   } catch (error) {
     console.error('Ошибка при отправке статистики администратору:', error);
   }

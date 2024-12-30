@@ -44,7 +44,7 @@ registerButtonHandlers(bot);
 
 // Отправляем статистику каждые 24 часа
 // setInterval(sendStatisticsToAdmin, 24 * 60 * 60 * 1000);
-setInterval(() => sendStatisticsToAdmin(bot, tgId), 60 * 1000);
+setInterval(() => sendStatisticsToAdmin(bot, tgId), 24 * 60 * 60 * 1000);
 
 // Запуск бота
 bot.launch().catch(error => {
