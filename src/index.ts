@@ -28,7 +28,6 @@ export const pushToStack = (userId: string, state: string) => {
     userNavigationStack[userId] = [];
   }
   userNavigationStack[userId].push(state);
-  console.log('userNavigationStack: ', userNavigationStack);
 };
 
 // Функция для извлечения последнего состояния из стека
@@ -44,7 +43,7 @@ registerButtonHandlers(bot);
 
 // Отправляем статистику каждые 24 часа
 // setInterval(sendStatisticsToAdmin, 24 * 60 * 60 * 1000);
-setInterval(() => sendStatisticsToAdmin(bot, tgId), 24 * 60 * 60 * 1000);
+setInterval(() => sendStatisticsToAdmin(bot, tgId), 3 * 60 * 60 * 1000);
 
 // Запуск бота
 bot.launch().catch(error => {

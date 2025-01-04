@@ -53,7 +53,7 @@ export const groups: Groups = [
     key: 'group_steps',
     name: 'Ступени',
     address: 'г. Чебоксары, ул. Патриса Лумумбы, 8.',
-    description: 'Учебно-деловой центр, второй этаж, каб.203.',
+    description: 'Учебно-деловой центр, второй этаж, каб. 203.',
     mapLink: 'https://yandex.ru/maps/-/CDqKzAll',
     videoPath: 'https://vk.com/clip-213121988_456239025',
     imageUrl:
@@ -68,7 +68,7 @@ export const groups: Groups = [
     key: 'group_nochnaya',
     name: 'Ночная',
     address: 'г. Чебоксары, пр. Ивана Яковлева, д. 2а.',
-    description: 'Чувашавтодор, второй этаж, каб 223.',
+    description: 'Чувашавтодор, второй этаж, каб. 223.',
     mapLink: 'https://yandex.ru/maps/-/CDqKzIjo',
     videoPath: 'https://vk.com/clip-213121988_456239026',
     imageUrl:
@@ -84,12 +84,12 @@ export const groups: Groups = [
   {
     key: 'group_istochnik',
     name: 'Источник',
-    address: 'г. Чебоксары, ул. Гузовского, 14.',
-    description: 'Вход со стороны дороги, у входа вывеска Парикмахерская.',
-    mapLink: 'https://yandex.ru/maps/-/CDb7iHkq',
-    videoPath: 'https://vk.com/clip-213121988_456239030',
+    address: 'г. Чебоксары, улица Афанасьева, 8.',
+    description: '"АВТОМАТСТРОМ", 4 этаж, каб. 405.',
+    mapLink: '',
+    videoPath: '',
     imageUrl:
-      'https://sun9-34.userapi.com/impg/BYlMhC0NC73v0NAQML1JJ-80AtCLtPDhEyURsw/kO1RgKVsDgU.jpg?size=1280x960&quality=95&sign=129926ac15c4522446d6d9f539e5deda&type=album',
+      'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
     phone: '+7 (8352) 37-57-21',
     schedule: [
       { days: ['Вт', 'Пт'], time: '18:30' },
