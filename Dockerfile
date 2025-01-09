@@ -1,25 +1,26 @@
-# Используем официальный образ Node.js в качестве базового
-FROM node:18
+# Используем Node.js slim образ
+FROM node:18-slim
 
 # Устанавливаем рабочую директорию
 WORKDIR /usr/src/app
 
-# Копируем package.json и package-lock.json (если он есть)
+# Копируем package.json и package-lock.json
 COPY package*.json ./
 
-# Устанавливаем зависимости
+# Устанавливаем все зависимости (включая devDependencies)
 RUN npm install
 
-# Копируем все остальные файлы проекта
+# Копируем файлы проекта
 COPY . .
 
 # Компилируем TypeScript в JavaScript
 RUN npm run build
 
-COPY .env ./
+# Удаляем devDependencies для уменьшения размера образа
+RUN npm prune --production
 
-# Указываем команду для запуска приложения
+# Устанавливаем переменную окружения
+ENV NODE_ENV=production
+
+# Запуск приложения
 CMD ["npm", "start"]
-
-# Открываем порт, если это необходимо (например, для Telegraf)
-EXPOSE 3000
