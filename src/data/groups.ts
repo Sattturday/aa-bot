@@ -15,7 +15,9 @@ export type Groups = {
   city: string;
 }[];
 
-export const groups: Groups = [
+export const aaPhone = '+7 (905) 346-65-67';
+
+export const aaGroups: Groups = [
   {
     key: 'group_12_21',
     name: '12:21',
@@ -201,9 +203,7 @@ export const alAnonGroups: Groups = [
     imageUrl:
       'https://sun9-26.userapi.com/impg/6AooTmwxSISawcQZEBVR17lI0VhobFTesEugeg/ZaU9fZlHr1Y.jpg?size=878x530&quality=95&sign=1cf7609f65ae9b25b81bfd797c86675a&type=album',
     phone: '+7 (927) 845-21-50',
-    schedule: [
-      { days: ['Вс'], time: '17:00' },
-    ],
+    schedule: [{ days: ['Вс'], time: '17:00' }],
     notes: '',
     city: 'Чебоксары',
   },
@@ -211,17 +211,13 @@ export const alAnonGroups: Groups = [
     key: 'group_hopestar',
     name: 'Звезда Надежды',
     address: 'г. Канаш, ул. 30 лет Победы, 26.',
-    description:
-      'Часовня Петра и Февронии.',
+    description: 'Часовня Петра и Февронии.',
     mapLink: 'https://yandex.ru/maps/-/CHa~rV0M',
     videoPath: '',
-    imageUrl:
-      '',
+    imageUrl: '',
     phone: '+7 (927) 843-05-68',
-    schedule: [
-      { days: ['Ср'], time: '18:00' },
-    ],
+    schedule: [{ days: ['Ср'], time: '18:00' }],
     notes: '',
     city: 'Канаш',
   },
-]
+];

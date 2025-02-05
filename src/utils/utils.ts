@@ -1,6 +1,6 @@
 import { Context, Markup } from 'telegraf';
 import { messages } from '../data/messages';
-import { Groups, groups } from '../data/groups';
+import { Groups } from '../data/groups';
 import { buttons } from '../data/buttons';
 
 // Главное меню
@@ -56,7 +56,7 @@ export const handleButtonActionWithImage = async (
 };
 
 // Формирование информации о группе
-export const sendGroupInfo = (key: string) => {
+export const sendGroupInfo = (key: string, groups: Groups) => {
   const group = groups.find(g => g.key === key);
   if (group) {
     const message = `
@@ -79,7 +79,11 @@ ${group.notes ? '🗣 ' + group.notes : ''}
 };
 
 // Универсальный обработчик для кнопок с изображением и группой
-export const handleGroupInfo = async (ctx: Context, groupKey: string) => {
+export const handleGroupInfo = async (
+  ctx: Context,
+  groupKey: string,
+  groups: Groups,
+) => {
   const group = groups.find(g => g.key === groupKey);
   if (!group) {
     return ctx.reply('Группа не найдена.');
@@ -110,7 +114,7 @@ export const handleGroupInfo = async (ctx: Context, groupKey: string) => {
     await ctx.replyWithPhoto(
       { url: group.imageUrl }, // URL изображения
       {
-        caption: sendGroupInfo(groupKey),
+        caption: sendGroupInfo(groupKey, groups),
         reply_markup: Markup.inlineKeyboard(buttons).reply_markup,
       },
     );
@@ -123,16 +127,17 @@ export const handleGroupInfo = async (ctx: Context, groupKey: string) => {
 };
 
 // Функция для формирования сообщения с расписанием всех групп
-export function generateGroupScheduleMessage(groups: Groups): string {
-  const header = `🙏 Остаться трезвым непросто, но Вы не одни. Группы АА поддержат Вас на пути к выздоровлению.\n\n📞 Горячая линия +7 (905) 346-65-67\n\n`;
-
+export function generateGroupScheduleMessage(
+  header: string,
+  groups: Groups,
+): string {
   const groupMessages = groups
     .map((group, index) => {
       const scheduleText = group.schedule
         .map(s => `${s.days.join(', ')} в ${s.time}`)
         .join('; ');
-      return `${index + 1}️⃣ Группа "${group.name}"\n📍${
-        group.address
+      return `${index + 1}️⃣ Группа "${group.name}"\n📍${group.address}\n🚩${
+        group.description ? group.description : '---'
       }\n🕖 ${scheduleText}\n📞${group.phone}\n`;
     })
     .join('\n');

@@ -12,6 +12,7 @@ import {
   sendWelcomeMessage,
 } from './utils';
 import { messages } from '../data/messages';
+import { aaGroups } from '../data/groups';
 
 export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // Регистрация обработчика для /start
@@ -168,7 +169,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
         pushToStack(userId.toString(), 'group_schedule');
         addToHistory(userId.toString(), key);
 
-        await handleGroupInfo(ctx, key);
+        await handleGroupInfo(ctx, key, aaGroups);
       } catch (error) {
         console.error(
           `Ошибка при регистрации обработчика для кнопки ${key}:`,
