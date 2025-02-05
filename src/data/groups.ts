@@ -86,7 +86,7 @@ export const groups: Groups = [
     name: 'Источник',
     address: 'г. Чебоксары, улица Афанасьева, 8.',
     description: '"АВТОМАТСТРОМ", 4 этаж, каб. 405.',
-    mapLink: '',
+    mapLink: 'https://yandex.ru/maps/-/CHUbzA8b',
     videoPath: '',
     imageUrl:
       'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
@@ -158,3 +158,70 @@ export const groups: Groups = [
     city: 'Канаш',
   },
 ];
+
+export const alAnonGroups: Groups = [
+  {
+    key: 'group_fenix',
+    name: 'Феникс',
+    address: 'г. Чебоксары, улица Афанасьева, 8.',
+    description: '"АВТОМАТСТРОМ", 4 этаж, каб. 405.',
+    mapLink: 'https://yandex.ru/maps/-/CHUbzA8b',
+    videoPath: '',
+    imageUrl:
+      'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
+    phone: '+7 (927) 845-21-50',
+    schedule: [
+      { days: ['Чт'], time: '18:00' },
+      { days: ['Вс'], time: '12:00' },
+    ],
+    notes: '',
+    city: 'Чебоксары',
+  },
+  {
+    key: 'group_baby',
+    name: 'Росток',
+    address: 'г. Чебоксары, ул. Патриса Лумумбы, 8.',
+    description: 'Учебно-деловой центр, второй этаж, каб. 203.',
+    mapLink: 'https://yandex.ru/maps/-/CDqKzAll',
+    videoPath: 'https://vk.com/clip-213121988_456239025',
+    imageUrl:
+      'https://sun9-62.userapi.com/impg/xJDcroKOam4Y4b6VMB90bcyH9qN-GiT4u5i71g/YPb8oTS534k.jpg?size=2560x1920&quality=95&sign=3c6ef6e08a970f52af73d5d86765b77c&type=album',
+    phone: '+7 (927) 845-21-50',
+    schedule: [{ days: ['Вт'], time: '18:00' }],
+    notes: '',
+    city: 'Чебоксары',
+  },
+  {
+    key: 'group_new_look',
+    name: 'Новый взгляд',
+    address: 'г. Чебоксары, пр. Ивана Яковлева, д. 2а.',
+    description: 'Чувашавтодор, второй этаж, каб. 223.',
+    mapLink: 'https://yandex.ru/maps/-/CDqKzIjo',
+    videoPath: 'https://vk.com/clip-213121988_456239026',
+    imageUrl:
+      'https://sun9-26.userapi.com/impg/6AooTmwxSISawcQZEBVR17lI0VhobFTesEugeg/ZaU9fZlHr1Y.jpg?size=878x530&quality=95&sign=1cf7609f65ae9b25b81bfd797c86675a&type=album',
+    phone: '+7 (927) 845-21-50',
+    schedule: [
+      { days: ['Вс'], time: '17:00' },
+    ],
+    notes: '',
+    city: 'Чебоксары',
+  },
+  {
+    key: 'group_hopestar',
+    name: 'Звезда Надежды',
+    address: 'г. Канаш, ул. 30 лет Победы, 26.',
+    description:
+      'Часовня Петра и Февронии.',
+    mapLink: 'https://yandex.ru/maps/-/CHa~rV0M',
+    videoPath: '',
+    imageUrl:
+      '',
+    phone: '+7 (927) 843-05-68',
+    schedule: [
+      { days: ['Ср'], time: '18:00' },
+    ],
+    notes: '',
+    city: 'Канаш',
+  },
+]
