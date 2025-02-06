@@ -45,11 +45,39 @@ registerButtonHandlers(bot);
 // setInterval(sendStatisticsToAdmin, 24 * 60 * 60 * 1000);
 setInterval(() => sendStatisticsToAdmin(bot, tgId), 3 * 60 * 60 * 1000);
 
-// Запуск бота
-bot.launch().catch(error => {
-  console.error('Ошибка при запуске бота:', error);
-});
-console.log('Ура, бот запущен!');
+// Функция для запуска бота с перезапуском в случае ошибки.
+async function startBot() {
+  try {
+    console.log('Запуск бота...');
 
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
+    // Отправляем сообщение о запуске
+    if (tgId) {
+      await bot.telegram.sendMessage(tgId, 'Ура, бот запущен!');
+    }
+
+    // Запускаем бота
+    await bot.launch();
+  } catch (error) {
+    console.error('Ошибка при запуске бота:', error);
+    console.log('Попытка перезапуска бота через 1 минуту...');
+
+    // Перезапуск бота через 60 секунд
+    setTimeout(startBot, 60 * 1000);
+  }
+}
+
+// Обработка сигналов завершения процесса
+process.on('SIGINT', async () => {
+  console.log('Получен сигнал SIGINT. Остановка бота...');
+  await bot.stop();
+  process.exit();
+});
+
+process.on('SIGTERM', async () => {
+  console.log('Получен сигнал SIGTERM. Остановка бота...');
+  await bot.stop();
+  process.exit();
+});
+
+// Запускаем бота
+startBot();
