@@ -60,8 +60,7 @@ export const buttons: Buttons = {
     [Markup.button.callback('Группа "Ночная"', 'group_nochnaya')],
     [Markup.button.callback('Группа "Источник"', 'group_istochnik')],
     [Markup.button.callback('Группа "Август"', 'group_avgust')],
-    [Markup.button.callback('Группа "Набережная"', 'group_naberezhnaya')],
-    [Markup.button.callback('Группа "Новая"', 'group_novaya')],
+    [Markup.button.callback('Группа "Спутник"', 'group_sputnik')],
     [Markup.button.callback('Группа "Ирек"', 'group_irek')],
 
     [Markup.button.callback('⬅️ Назад', 'back')],

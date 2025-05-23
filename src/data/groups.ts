@@ -89,7 +89,7 @@ export const aaGroups: Groups = [
     address: 'г. Чебоксары, улица Афанасьева, 8.',
     description: '"АВТОМАТСТРОМ", 4 этаж, каб. 405.',
     mapLink: 'https://yandex.ru/maps/-/CHUbzA8b',
-    videoPath: '',
+    videoPath: 'https://vk.com/clip-213121988_456239099',
     imageUrl:
       'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
     phone: '+7 (8352) 37-57-21',
@@ -116,31 +116,16 @@ export const aaGroups: Groups = [
     city: 'Новочебоксарск',
   },
   {
-    key: 'group_naberezhnaya',
-    name: 'Набережная',
-    address: 'г. Новочебоксарск, ул. Семёнова, 15.',
-    description: 'ЖЭК управдома, актовый зал.',
-    mapLink: 'https://yandex.ru/maps/-/CDqKvX4~',
-    videoPath: 'https://vk.com/clip-213121988_456239027',
-    imageUrl:
-      'https://sun9-48.userapi.com/impg/BrQzYibmf4eITlvrnxhZhJAM-ooMHWefkgu4Gg/1Izs1yC_JyM.jpg?size=1280x1280&quality=95&sign=15747f12912228c803a892dd94258886&type=album',
-    phone: '+7 (902) 019-70-50',
-    schedule: [{ days: ['Вт', 'Чт'], time: '18:30' }],
-    notes:
-      'Первое собрание месяца — открытое, в праздничные дни собрания проводятся.',
-    city: 'Новочебоксарск',
-  },
-  {
-    key: 'group_novaya',
-    name: 'Новая',
+    key: 'group_sputnik',
+    name: 'Спутник',
     address: 'г. Новочебоксарск, ул. Винокурова, 42Д.',
     description: 'ТД Эссен, вход с торца, со стороны «Вкусно и точка».',
     mapLink: 'https://yandex.ru/maps/-/CDb7mApP',
     videoPath: 'https://vk.com/clip-213121988_456239033',
     imageUrl:
       'https://sun9-25.userapi.com/impg/v6Lao9gf0X3Eve9fNG0pWeU_5AV6t7n78nBvUw/4dNHX1OqQac.jpg?size=1280x960&quality=95&sign=a07147ca2840606b16481f4d01c9f969&type=album',
-    phone: '+7 (919) 662-56-34',
-    schedule: [{ days: ['Пн', 'Ср', 'Пт', 'Сб', 'Вс'], time: '18:30' }],
+    phone: '+7 (902) 019-70-50',
+    schedule: [{ days: ['Пн', 'Вт', 'Ср', 'Пт', 'Сб', 'Вс'], time: '18:30' }],
     notes:
       'Последнее собрание месяца — открытое, в праздничные дни собрания проводятся.',
     city: 'Новочебоксарск',
@@ -168,7 +153,7 @@ export const alAnonGroups: Groups = [
     address: 'г. Чебоксары, улица Афанасьева, 8.',
     description: '"АВТОМАТСТРОМ", 4 этаж, каб. 405.',
     mapLink: 'https://yandex.ru/maps/-/CHUbzA8b',
-    videoPath: '',
+    videoPath: 'https://vk.com/clip-213121988_456239099',
     imageUrl:
       'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
     phone: '+7 (927) 845-21-50',

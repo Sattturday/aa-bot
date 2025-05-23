@@ -11,5 +11,5 @@ export const urls = {
   daily: 'https://t.me/daylybot',
   question: 'https://t.me/AAchuvashii',
   support: 'https://t.me/+HaoOC7NG0vE2Nzdi',
-  open_meeting: 'https://21.aarussia.ru/calendar/january',
+  open_meeting: 'https://21.aarussia.ru/#raspisanie',
 };

@@ -40,8 +40,7 @@ export const buttonKeys = {
     'group_nochnaya',
     'group_istochnik',
     'group_avgust',
-    'group_naberezhnaya',
-    'group_novaya',
+    'group_sputnik',
     'group_irek',
   ],
 };
