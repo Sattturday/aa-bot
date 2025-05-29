@@ -159,7 +159,7 @@ export const alAnonGroups: Groups = [
     phone: '+7 (927) 845-21-50',
     schedule: [
       { days: ['Чт'], time: '18:00' },
-      { days: ['Вс'], time: '12:00' },
+      { days: ['Вс'], time: '18:00' },
     ],
     notes: '',
     city: 'Чебоксары',
