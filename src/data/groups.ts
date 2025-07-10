@@ -92,7 +92,7 @@ export const aaGroups: Groups = [
     videoPath: 'https://vk.com/clip-213121988_456239099',
     imageUrl:
       'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
-    phone: '+7 (8352) 37-57-21',
+    phone: '+7 (927) 667-57-21',
     schedule: [
       { days: ['Вт', 'Пт'], time: '18:30' },
       { days: ['Вс'], time: '15:00' },
