@@ -94,7 +94,8 @@ export const aaGroups: Groups = [
       'https://sun9-22.userapi.com/impg/rnZybLbF07u9skk4q9GeyevofIZuZDQoL6JhMQ/DliWfChKhUA.jpg?size=1024x768&quality=95&sign=879716b2c99fda60820c9a0aee1faff6&type=album',
     phone: '+7 (927) 667-57-21',
     schedule: [
-      { days: ['Вт', 'Пт'], time: '18:30' },
+      { days: ['Пн'], time: '19:30' },
+      { days: ['Вт', 'Ср', 'Пт'], time: '18:30' },
       { days: ['Вс'], time: '15:00' },
     ],
     notes:
@@ -159,7 +160,7 @@ export const alAnonGroups: Groups = [
     phone: '+7 (927) 845-21-50',
     schedule: [
       { days: ['Чт'], time: '18:00' },
-      { days: ['Вс'], time: '18:00' },
+      { days: ['Вс'], time: '12:00' },
     ],
     notes: '',
     city: 'Чебоксары',
@@ -195,13 +196,13 @@ export const alAnonGroups: Groups = [
   {
     key: 'group_hopestar',
     name: 'Звезда Надежды',
-    address: 'г. Канаш, ул. 30 лет Победы, 26.',
-    description: 'Часовня Петра и Февронии.',
-    mapLink: 'https://yandex.ru/maps/-/CHa~rV0M',
+    address: 'г. Канаш, ул. Канашская, дом 6, пом. 7',
+    description: 'Парикмахерская «Екатерина». Ост. «Сквер Афганцев»',
+    mapLink: 'https://yandex.ru/maps/-/CPQCuEnp',
     videoPath: '',
     imageUrl: '',
     phone: '+7 (927) 843-05-68',
-    schedule: [{ days: ['Ср'], time: '18:00' }],
+    schedule: [{ days: ['Ср'], time: '13:00' }],
     notes: '',
     city: 'Канаш',
   },
