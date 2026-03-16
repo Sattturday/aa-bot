@@ -1,6 +1,6 @@
 import { Context, Markup } from 'telegraf';
-import { messages } from '../data/messages';
-import { Groups } from '../data/groups';
+import { getMessageText, getGroupScheduleButtons } from '../db/dataProvider';
+import { GroupWithSchedule } from '../types';
 import { buttons } from '../data/buttons';
 
 // Главное меню
@@ -19,8 +19,13 @@ export const handleButtonAction = async (ctx: Context, key: string) => {
   try {
     await ctx.deleteMessage();
 
-    await ctx.reply(messages[key], Markup.inlineKeyboard(buttons[key]));
-    // await forwardMessageToAdmin(ctx, key);
+    const message = getMessageText(key);
+    // For group_schedule, use dynamic buttons; otherwise use static
+    const keyboard = key === 'group_schedule'
+      ? Markup.inlineKeyboard(getGroupScheduleButtons())
+      : Markup.inlineKeyboard(buttons[key]);
+
+    await ctx.reply(message, keyboard);
   } catch (error) {
     console.error(`Ошибка при обработке действия кнопки ${key}:`, error);
   }
@@ -34,19 +39,18 @@ export const handleButtonActionWithImage = async (
 ) => {
   try {
     await ctx.deleteMessage();
-    const message = messages[key]; // Получаем текст сообщения по ключу
-    const keyboard = Markup.inlineKeyboard(buttons[key]); // Получаем кнопки по ключу
+    const message = getMessageText(key);
+    const keyboard = key === 'group_schedule'
+      ? Markup.inlineKeyboard(getGroupScheduleButtons())
+      : Markup.inlineKeyboard(buttons[key]);
 
-    // Отправка изображения вместе с сообщением
     await ctx.replyWithPhoto(
-      { url: imageUrl }, // URL изображения
+      { url: imageUrl },
       {
         caption: message,
-        reply_markup: keyboard.reply_markup, // Используем созданную клавиатуру
+        reply_markup: keyboard.reply_markup,
       },
     );
-
-    // await forwardMessageToAdmin(ctx, key);
   } catch (error) {
     console.error(
       `Ошибка при обработке действия кнопки с изображением ${key}:`,
@@ -56,7 +60,7 @@ export const handleButtonActionWithImage = async (
 };
 
 // Формирование информации о группе
-export const sendGroupInfo = (key: string, groups: Groups) => {
+export const sendGroupInfo = (key: string, groups: GroupWithSchedule[]) => {
   const group = groups.find(g => g.key === key);
   if (group) {
     const message = `
@@ -82,14 +86,14 @@ ${group.notes ? '🗣 ' + group.notes : ''}
 export const handleGroupInfo = async (
   ctx: Context,
   groupKey: string,
-  groups: Groups,
+  groups: GroupWithSchedule[],
 ) => {
   const group = groups.find(g => g.key === groupKey);
   if (!group) {
     return ctx.reply('Группа не найдена.');
   }
 
-  const buttons = [
+  const groupButtons = [
     [
       group.mapLink
         ? Markup.button.url('🗺 Посмотреть на карте', group.mapLink)
@@ -112,10 +116,10 @@ export const handleGroupInfo = async (
   try {
     await ctx.deleteMessage();
     await ctx.replyWithPhoto(
-      { url: group.imageUrl }, // URL изображения
+      { url: group.imageUrl },
       {
         caption: sendGroupInfo(groupKey, groups),
-        reply_markup: Markup.inlineKeyboard(buttons).reply_markup,
+        reply_markup: Markup.inlineKeyboard(groupButtons).reply_markup,
       },
     );
   } catch (error) {
@@ -126,10 +130,10 @@ export const handleGroupInfo = async (
   }
 };
 
-// Функция для формирования сообщения с расписанием всех групп
+// Re-export for backwards compat (used in messages.ts generation)
 export function generateGroupScheduleMessage(
   header: string,
-  groups: Groups,
+  groups: GroupWithSchedule[],
 ): string {
   const groupMessages = groups
     .map((group, index) => {

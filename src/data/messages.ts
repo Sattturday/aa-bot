@@ -1,19 +1,29 @@
-import { generateGroupScheduleMessage } from '../utils/utils';
-import { aaGroups, aaPhone, alAnonGroups } from './groups';
+import { aaGroups, aaPhone, alAnonGroups, Groups } from './groups';
 
 // Типы для сообщений
 type Messages = {
   [key: string]: string;
 };
 
+function buildScheduleMessage(header: string, groups: Groups): string {
+  const groupMessages = groups
+    .map((group, index) => {
+      const scheduleText = group.schedule
+        .map(s => `${s.days.join(', ')} в ${s.time}`)
+        .join('; ');
+      return `${index + 1}️⃣ Группа "${group.name}"\n📍${group.address}\n🚩${
+        group.description ? group.description : '---'
+      }\n🕖 ${scheduleText}\n📞${group.phone}\n`;
+    })
+    .join('\n');
+  return header + groupMessages;
+}
+
 const aaHeader = `🙏 Остаться трезвым непросто, но Вы не одни. Группы АА поддержат Вас на пути к выздоровлению.\n\n📞 Горячая линия ${aaPhone}\n\n`;
 const alAnonHeader = `🙏 Группы для родственников алкоголиков. Приходите, мы вам рады.\n\n`;
 
-const aaGroupSchedule = generateGroupScheduleMessage(aaHeader, aaGroups);
-const alAnonGroupSchedule = generateGroupScheduleMessage(
-  alAnonHeader,
-  alAnonGroups,
-);
+const aaGroupSchedule = buildScheduleMessage(aaHeader, aaGroups);
+const alAnonGroupSchedule = buildScheduleMessage(alAnonHeader, alAnonGroups);
 const step11Actions =
   'Действия 11 шага по БКАА\n' +
   'Утренняя Часть\n\n' +

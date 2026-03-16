@@ -3,3 +3,6 @@ node_modules
 dist
 package-lock.json
 docker-compose.yml
+data/bot.db
+data/bot.db-wal
+data/bot.db-shm
