@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchUsers, fetchUserActions, fetchStats } from '../api/client';
 import type { UserRow, UserAction, Stats } from '../api/client';
@@ -96,9 +96,8 @@ export default function UsersPage() {
           </thead>
           <tbody>
             {users.map((user) => (
-              <>
+              <React.Fragment key={user.telegram_id}>
                 <tr
-                  key={user.telegram_id}
                   onClick={() => toggleUser(user)}
                   className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
                 >
@@ -110,7 +109,7 @@ export default function UsersPage() {
                   </td>
                 </tr>
                 {expandedUserId === user.telegram_id && (
-                  <tr key={`${user.telegram_id}-actions`}>
+                  <tr>
                     <td colSpan={4} className="py-2 px-3 bg-gray-50">
                       {actionsLoading ? (
                         <div className="text-sm text-gray-500">Загрузка...</div>
@@ -121,7 +120,7 @@ export default function UsersPage() {
                             <div key={a.id} className="text-sm flex justify-between">
                               <span>{a.action}</span>
                               <span className="text-gray-400">
-                                {new Date(a.timestamp).toLocaleString('ru-RU')}
+                                {new Date(a.created_at).toLocaleString('ru-RU')}
                               </span>
                             </div>
                           ))}
@@ -132,7 +131,7 @@ export default function UsersPage() {
                     </td>
                   </tr>
                 )}
-              </>
+              </React.Fragment>
             ))}
           </tbody>
         </table>

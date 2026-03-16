@@ -23,7 +23,7 @@ export const addToHistory = (
 
 // Write recent history to file (for sending to admin)
 const writeHistoryToFile = async (bot: Telegraf<Context<Update>>) => {
-  const filePath = path.join(__dirname, 'user_history.txt');
+  const filePath = path.join(process.cwd(), 'data', 'user_history.txt');
 
   const recentData = usersRepo.getRecentActions(3);
 
@@ -64,6 +64,7 @@ export const sendStatisticsToAdmin = async (
       const filePath = await writeHistoryToFile(bot);
       if (filePath) {
         await bot.telegram.sendDocument(tgId, { source: filePath });
+        try { fs.unlinkSync(filePath); } catch { /* ignore */ }
       }
       console.log(`Статистика отправлена: ${stats.activeUsers} пользователей, ${stats.totalActions} действий.`);
     }

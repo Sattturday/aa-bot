@@ -34,13 +34,23 @@ addAdmin(tgId);
 
 const bot = new Telegraf(token);
 
-// Создаем объект для хранения истории навигации
+// Навигационный стек с ограничением по размеру (макс 10000 пользователей)
+const MAX_NAV_USERS = 10000;
 let userNavigationStack: { [userId: string]: string[] } = {};
 
-export const clearUserNavigationStack = (id: string) => {
-  if (userNavigationStack[id]) {
-    userNavigationStack[id].length = 0;
+function trimNavigationStack() {
+  const keys = Object.keys(userNavigationStack);
+  if (keys.length > MAX_NAV_USERS) {
+    // Удаляем первую половину (самые старые)
+    const toRemove = keys.slice(0, keys.length - MAX_NAV_USERS);
+    for (const k of toRemove) {
+      delete userNavigationStack[k];
+    }
   }
+}
+
+export const clearUserNavigationStack = (id: string) => {
+  delete userNavigationStack[id];
 };
 
 // Функция для добавления состояния в стек
@@ -49,6 +59,7 @@ export const pushToStack = (userId: string, state: string) => {
     userNavigationStack[userId] = [];
   }
   userNavigationStack[userId].push(state);
+  trimNavigationStack();
 };
 
 // Функция для извлечения последнего состояния из стека

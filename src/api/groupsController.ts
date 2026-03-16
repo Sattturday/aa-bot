@@ -19,6 +19,23 @@ export function getGroup(req: Request, res: Response): void {
 }
 
 export function createGroup(req: Request, res: Response): void {
+  const { key, type, name } = req.body;
+  if (!key || typeof key !== 'string') {
+    res.status(400).json({ error: 'key is required' });
+    return;
+  }
+  if (!name || typeof name !== 'string') {
+    res.status(400).json({ error: 'name is required' });
+    return;
+  }
+  if (type !== 'aa' && type !== 'alanon') {
+    res.status(400).json({ error: 'type must be "aa" or "alanon"' });
+    return;
+  }
+  if (!/^[a-z0-9_]+$/.test(key)) {
+    res.status(400).json({ error: 'key must contain only lowercase letters, digits, and underscores' });
+    return;
+  }
   try {
     const group = groupsRepo.createGroup(req.body);
     invalidateGroups();

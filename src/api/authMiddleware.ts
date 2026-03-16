@@ -2,7 +2,11 @@ import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 
 export function getJwtSecret(): string {
-  return process.env.JWT_SECRET || 'default-secret-change-me';
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error('JWT_SECRET environment variable is not set');
+  }
+  return secret;
 }
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {

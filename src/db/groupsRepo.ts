@@ -73,32 +73,43 @@ export function createGroup(data: {
     VALUES (@key, @type, @name, @address, @description, @map_link, @video_path, @image_url, @phone, @notes, @city, @sort_order)
   `);
 
-  const result = insert.run({
-    key: data.key,
-    type: data.type,
-    name: data.name,
-    address: data.address || '',
-    description: data.description || '',
-    map_link: data.map_link || '',
-    video_path: data.video_path || '',
-    image_url: data.image_url || '',
-    phone: data.phone || '',
-    notes: data.notes || '',
-    city: data.city || '',
-    sort_order: data.sort_order || 0,
+  const insertSchedule = db.prepare('INSERT INTO schedules (group_id, days, time) VALUES (?, ?, ?)');
+
+  const transaction = db.transaction(() => {
+    const result = insert.run({
+      key: data.key,
+      type: data.type,
+      name: data.name,
+      address: data.address || '',
+      description: data.description || '',
+      map_link: data.map_link || '',
+      video_path: data.video_path || '',
+      image_url: data.image_url || '',
+      phone: data.phone || '',
+      notes: data.notes || '',
+      city: data.city || '',
+      sort_order: data.sort_order || 0,
+    });
+
+    const groupId = result.lastInsertRowid as number;
+
+    if (data.schedule) {
+      for (const s of data.schedule) {
+        insertSchedule.run(groupId, JSON.stringify(s.days), s.time);
+      }
+    }
+
+    return groupId;
   });
 
-  const groupId = result.lastInsertRowid as number;
-
-  if (data.schedule) {
-    const insertSchedule = db.prepare('INSERT INTO schedules (group_id, days, time) VALUES (?, ?, ?)');
-    for (const s of data.schedule) {
-      insertSchedule.run(groupId, JSON.stringify(s.days), s.time);
-    }
-  }
-
+  const groupId = transaction();
   return getGroupById(groupId)!;
 }
+
+const ALLOWED_GROUP_FIELDS = new Set([
+  'key', 'type', 'name', 'address', 'description', 'map_link',
+  'video_path', 'image_url', 'phone', 'notes', 'city', 'sort_order',
+]);
 
 export function updateGroup(id: number, data: {
   key?: string;
@@ -118,7 +129,7 @@ export function updateGroup(id: number, data: {
   const values: Record<string, unknown> = { id };
 
   for (const [k, v] of Object.entries(data)) {
-    if (v !== undefined) {
+    if (v !== undefined && ALLOWED_GROUP_FIELDS.has(k)) {
       fields.push(`${k} = @${k}`);
       values[k] = v;
     }

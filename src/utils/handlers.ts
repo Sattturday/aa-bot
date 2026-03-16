@@ -32,6 +32,11 @@ function track(ctx: Context, action: string) {
 }
 
 export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
+  // no_action — заглушка для недоступных кнопок
+  bot.action('no_action', async ctx => {
+    await ctx.answerCbQuery('Пока недоступно');
+  });
+
   // Регистрация обработчика для /start
   bot.start(async ctx => {
     const firstName = ctx.from?.first_name || 'друг';
@@ -53,6 +58,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.start.forEach(key => {
     bot.action(key, async ctx => {
       try {
+        await ctx.answerCbQuery();
         const { userId } = getUserInfo(ctx);
         pushToStack(userId, 'start');
         track(ctx, key);
@@ -72,6 +78,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.welcome.forEach(key => {
     bot.action(key, async ctx => {
       try {
+        await ctx.answerCbQuery();
         const { userId } = getUserInfo(ctx);
         pushToStack(userId, 'welcome');
         track(ctx, key);
@@ -89,6 +96,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // Регистрация обработчиков для кнопок Новичок
   buttonKeys.newbie.forEach(key => {
     bot.action(key, async ctx => {
+      await ctx.answerCbQuery();
       const { userId } = getUserInfo(ctx);
       pushToStack(userId, 'newbie');
       track(ctx, key);
@@ -117,6 +125,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // Регистрация обработчиков для кнопок Член АА
   buttonKeys.participant.forEach(key => {
     bot.action(key, async ctx => {
+      await ctx.answerCbQuery();
       const { userId } = getUserInfo(ctx);
       pushToStack(userId, 'participant');
       track(ctx, key);
@@ -146,6 +155,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.faq.forEach(key => {
     bot.action(key, async ctx => {
       try {
+        await ctx.answerCbQuery();
         const { userId } = getUserInfo(ctx);
         pushToStack(userId, 'faq');
         track(ctx, key);
@@ -164,6 +174,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.about_aa.forEach(key => {
     bot.action(key, async ctx => {
       try {
+        await ctx.answerCbQuery();
         const { userId } = getUserInfo(ctx);
         pushToStack(userId, 'about_aa');
         track(ctx, key);
@@ -184,6 +195,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
     groupKeys.forEach(key => {
       bot.action(key, async ctx => {
         try {
+          await ctx.answerCbQuery();
           const { userId } = getUserInfo(ctx);
           pushToStack(userId, 'group_schedule');
           track(ctx, key);
@@ -205,6 +217,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // (groups added via admin panel after bot starts)
   bot.action(/^group_/, async ctx => {
     try {
+      await ctx.answerCbQuery();
       const key = ctx.match[0];
       const { userId } = getUserInfo(ctx);
       pushToStack(userId, 'group_schedule');
@@ -220,6 +233,7 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.relative.forEach(key => {
     bot.action(key, async ctx => {
       try {
+        await ctx.answerCbQuery();
         const { userId } = getUserInfo(ctx);
         pushToStack(userId, 'relative');
         track(ctx, key);
@@ -241,13 +255,14 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // Обработка нажатий на кнопку "Назад"
   bot.action('back', async ctx => {
     try {
-      const previousState = popFromStack(ctx.from.id.toString());
+      await ctx.answerCbQuery();
+      const previousState = popFromStack((ctx.from?.id || 0).toString());
       track(ctx, 'back');
 
       if (previousState) {
         if (previousState === 'welcome') {
           await ctx.deleteMessage();
-          clearUserNavigationStack(ctx.from.id.toString());
+          clearUserNavigationStack((ctx.from?.id || 0).toString());
           await sendWelcomeMessage(ctx);
         } else {
           await handleButtonAction(ctx, previousState);

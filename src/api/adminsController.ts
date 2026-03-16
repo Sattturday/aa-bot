@@ -17,6 +17,16 @@ export function addAdmin(req: Request, res: Response): void {
 
 export function removeAdmin(req: Request, res: Response): void {
   const { telegram_id } = req.params as Record<string, string>;
+  const allAdmins = adminsRepo.getAllAdmins();
+  if (allAdmins.length <= 1) {
+    res.status(400).json({ error: 'Cannot remove the last admin' });
+    return;
+  }
+  const callerId = (req as any).telegramId;
+  if (callerId === telegram_id) {
+    res.status(400).json({ error: 'Cannot remove yourself' });
+    return;
+  }
   const removed = adminsRepo.removeAdmin(telegram_id);
   if (!removed) {
     res.status(404).json({ error: 'Admin not found' });

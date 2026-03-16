@@ -76,10 +76,15 @@ export default function GroupEditor() {
       });
       if (data.schedules && data.schedules.length > 0) {
         setSchedules(
-          data.schedules.map((s: any) => ({
-            days: typeof s.days === 'string' ? s.days.split(',').filter(Boolean) : s.days || [],
-            time: s.time || '',
-          }))
+          data.schedules.map((s: any) => {
+            let days: string[] = [];
+            if (typeof s.days === 'string') {
+              try { days = JSON.parse(s.days); } catch { days = s.days.split(',').filter(Boolean); }
+            } else if (Array.isArray(s.days)) {
+              days = s.days;
+            }
+            return { days, time: s.time || '' };
+          })
         );
       }
     } catch (e: any) {
@@ -139,7 +144,7 @@ export default function GroupEditor() {
 
       const scheduleData = schedules
         .filter((s) => s.days.length > 0 && s.time)
-        .map((s) => ({ days: s.days.join(','), time: s.time }));
+        .map((s) => ({ days: s.days, time: s.time }));
 
       await replaceSchedules(groupId, scheduleData);
       navigate('/groups');

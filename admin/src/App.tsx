@@ -33,13 +33,15 @@ function App() {
         return;
       }
 
-      // Dev mode: accept token from URL param ?token=...
-      const urlToken = new URLSearchParams(window.location.search).get('token');
-      if (urlToken) {
-        setToken(urlToken);
-        setAuthed(true);
-        setLoading(false);
-        return;
+      // Dev mode only: accept token from URL param ?token=...
+      if (import.meta.env.DEV) {
+        const urlToken = new URLSearchParams(window.location.search).get('token');
+        if (urlToken) {
+          setToken(urlToken);
+          setAuthed(true);
+          setLoading(false);
+          return;
+        }
       }
 
       if (!initData) {

@@ -75,6 +75,7 @@ export function getStats(sinceHours?: number): {
     return { totalUsers, activeUsers, totalActions };
   }
 
+  const activeUsers = (db.prepare('SELECT COUNT(DISTINCT telegram_id) as c FROM user_actions').get() as { c: number }).c;
   const totalActions = (db.prepare('SELECT COUNT(*) as c FROM user_actions').get() as { c: number }).c;
-  return { totalUsers, activeUsers: totalUsers, totalActions };
+  return { totalUsers, activeUsers, totalActions };
 }

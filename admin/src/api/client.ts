@@ -260,7 +260,7 @@ export interface UserAction {
   id: number;
   telegram_id: number;
   action: string;
-  timestamp: string;
+  created_at: string;
 }
 
 export interface Stats {

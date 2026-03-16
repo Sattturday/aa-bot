@@ -52,19 +52,7 @@ export const buttons: Buttons = {
     [Markup.button.url('🛍 "Заказать литературу АА', urls.buy_literature)],
     [Markup.button.callback('⬅️ Назад', 'back')],
   ],
-  // Приветствиe --> Новичок --> Расписание групп
-  group_schedule: [
-    [Markup.button.callback('Группа "12:21"', 'group_12_21')],
-    [Markup.button.callback('Группа "Выход есть"', 'group_exit')],
-    [Markup.button.callback('Группа "Ступени"', 'group_steps')],
-    [Markup.button.callback('Группа "Ночная"', 'group_nochnaya')],
-    [Markup.button.callback('Группа "Источник"', 'group_istochnik')],
-    [Markup.button.callback('Группа "Август"', 'group_avgust')],
-    [Markup.button.callback('Группа "Спутник"', 'group_sputnik')],
-    [Markup.button.callback('Группа "Ирек"', 'group_irek')],
-
-    [Markup.button.callback('⬅️ Назад', 'back')],
-  ],
+  // group_schedule кнопки генерируются динамически из БД (см. dataProvider.getGroupScheduleButtons)
   // Приветствиe --> Новичок --> Вопрос - ответ
   faq: [
     [Markup.button.callback('🙏 Алкоголик ли я?', 'answer_1')],
