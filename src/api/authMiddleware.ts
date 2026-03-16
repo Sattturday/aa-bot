@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import * as jwt from 'jsonwebtoken';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'default-secret-change-me';
-
 export function getJwtSecret(): string {
-  return JWT_SECRET;
+  return process.env.JWT_SECRET || 'default-secret-change-me';
 }
 
 export function authMiddleware(req: Request, res: Response, next: NextFunction): void {
@@ -17,7 +15,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction):
   const token = authHeader.slice(7);
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as { telegramId: string };
+    const payload = jwt.verify(token, getJwtSecret()) as { telegramId: string };
     (req as any).telegramId = payload.telegramId;
     next();
   } catch {
