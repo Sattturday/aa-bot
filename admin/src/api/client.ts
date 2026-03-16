@@ -140,7 +140,7 @@ export async function deleteGroup(id: number): Promise<void> {
 
 export async function replaceSchedules(
   groupId: number,
-  schedules: Omit<ScheduleRow, 'id' | 'group_id'>[],
+  schedules: { days: string[]; time: string }[],
 ): Promise<ScheduleRow[]> {
   return request<ScheduleRow[]>(`/groups/${groupId}/schedules`, {
     method: 'PUT',
