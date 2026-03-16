@@ -33,6 +33,15 @@ function App() {
         return;
       }
 
+      // Dev mode: accept token from URL param ?token=...
+      const urlToken = new URLSearchParams(window.location.search).get('token');
+      if (urlToken) {
+        setToken(urlToken);
+        setAuthed(true);
+        setLoading(false);
+        return;
+      }
+
       if (!initData) {
         setError('Откройте через Telegram Mini App');
         setLoading(false);

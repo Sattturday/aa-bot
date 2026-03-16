@@ -1,5 +1,6 @@
 import { Context, Markup } from 'telegraf';
 import { getMessageText, getGroupScheduleButtons } from '../db/dataProvider';
+import { isAdmin } from '../db/adminsRepo';
 import { GroupWithSchedule } from '../types';
 import { buttons } from '../data/buttons';
 
@@ -7,8 +8,14 @@ import { buttons } from '../data/buttons';
 export const sendWelcomeMessage = async (ctx: Context) => {
   try {
     const message = 'Выбери подходящий вариант и нажми на кнопку ниже 👇';
+    const rows = [...buttons.welcome];
 
-    await ctx.reply(message, Markup.inlineKeyboard(buttons.welcome));
+    const userId = (ctx.from?.id || 0).toString();
+    if (isAdmin(userId)) {
+      rows.push([Markup.button.callback('🔧 Админ-панель', 'admin_panel')]);
+    }
+
+    await ctx.reply(message, Markup.inlineKeyboard(rows));
   } catch (error) {
     console.error('Ошибка при отправке приветственного сообщения:', error);
   }
@@ -127,6 +134,14 @@ export const handleGroupInfo = async (
       `Ошибка при обработке информации о группе ${groupKey}:`,
       error,
     );
+    // Fallback: отправляем без фото
+    try {
+      await ctx.reply(sendGroupInfo(groupKey, groups), {
+        reply_markup: Markup.inlineKeyboard(groupButtons).reply_markup,
+      });
+    } catch (fallbackError) {
+      console.error('Ошибка при отправке fallback:', fallbackError);
+    }
   }
 };
 
