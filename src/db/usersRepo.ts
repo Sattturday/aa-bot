@@ -47,7 +47,7 @@ export function getUserActions(telegramId: string, limit = 100): UserActionRow[]
 }
 
 export function getRecentActions(sinceHours = 3): { user: UserRow; actions: UserActionRow[] }[] {
-  const cutoff = new Date(Date.now() - sinceHours * 60 * 60 * 1000).toISOString();
+  const cutoff = new Date(Date.now() - sinceHours * 60 * 60 * 1000).toISOString().replace('T', ' ').replace('Z', '');
   const userIds = db.prepare(
     'SELECT DISTINCT telegram_id FROM user_actions WHERE created_at > ? ORDER BY telegram_id'
   ).all(cutoff) as { telegram_id: string }[];
@@ -62,20 +62,27 @@ export function getRecentActions(sinceHours = 3): { user: UserRow; actions: User
 }
 
 export function getStats(sinceHours?: number): {
-  totalUsers: number;
-  activeUsers: number;
-  totalActions: number;
+  total_users: number;
+  active_users: number;
+  actions: { action: string; count: number }[];
 } {
-  const totalUsers = (db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number }).c;
+  const total_users = (db.prepare('SELECT COUNT(*) as c FROM users').get() as { c: number }).c;
+
+  let active_users: number;
+  let actions: { action: string; count: number }[];
 
   if (sinceHours) {
-    const cutoff = new Date(Date.now() - sinceHours * 60 * 60 * 1000).toISOString();
-    const activeUsers = (db.prepare('SELECT COUNT(DISTINCT telegram_id) as c FROM user_actions WHERE created_at > ?').get(cutoff) as { c: number }).c;
-    const totalActions = (db.prepare('SELECT COUNT(*) as c FROM user_actions WHERE created_at > ?').get(cutoff) as { c: number }).c;
-    return { totalUsers, activeUsers, totalActions };
+    const cutoff = new Date(Date.now() - sinceHours * 60 * 60 * 1000).toISOString().replace('T', ' ').replace('Z', '');
+    active_users = (db.prepare('SELECT COUNT(DISTINCT telegram_id) as c FROM user_actions WHERE created_at > ?').get(cutoff) as { c: number }).c;
+    actions = db.prepare(
+      'SELECT action, COUNT(*) as count FROM user_actions WHERE created_at > ? GROUP BY action ORDER BY count DESC'
+    ).all(cutoff) as { action: string; count: number }[];
+  } else {
+    active_users = (db.prepare('SELECT COUNT(DISTINCT telegram_id) as c FROM user_actions').get() as { c: number }).c;
+    actions = db.prepare(
+      'SELECT action, COUNT(*) as count FROM user_actions GROUP BY action ORDER BY count DESC'
+    ).all() as { action: string; count: number }[];
   }
 
-  const activeUsers = (db.prepare('SELECT COUNT(DISTINCT telegram_id) as c FROM user_actions').get() as { c: number }).c;
-  const totalActions = (db.prepare('SELECT COUNT(*) as c FROM user_actions').get() as { c: number }).c;
-  return { totalUsers, activeUsers, totalActions };
+  return { total_users, active_users, actions };
 }

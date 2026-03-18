@@ -55,43 +55,50 @@ export default function UsersPage() {
     }
   }
 
-  if (loading && offset === 0) return <div className="p-4">Загрузка...</div>;
+  if (loading && offset === 0) return <div className="state-loading">Загрузка...</div>;
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/" className="text-blue-500 hover:underline">&larr; Назад</Link>
-        <h1 className="text-xl font-bold">Пользователи</h1>
-        <div />
+    <div className="page">
+      <div className="page-header">
+        <Link to="/" className="back-link">&#8592; Назад</Link>
+        <span className="page-header-title">Пользователи</span>
+        <div className="page-header-side" />
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
 
       {stats && (
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
-          <div className="card text-center">
-            <div className="text-2xl font-bold">{stats.total_users}</div>
-            <div className="text-sm text-gray-500">Всего</div>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr 1fr',
+            gap: 8,
+            marginBottom: 16,
+          }}
+        >
+          <div className="stat-card">
+            <div className="stat-value">{stats.total_users}</div>
+            <div className="stat-label">Всего</div>
           </div>
-          <div className="card text-center">
-            <div className="text-2xl font-bold">{stats.active_users}</div>
-            <div className="text-sm text-gray-500">Активных</div>
+          <div className="stat-card">
+            <div className="stat-value">{stats.active_users}</div>
+            <div className="stat-label">Активных</div>
           </div>
-          <div className="card text-center">
-            <div className="text-2xl font-bold">{stats.actions.length}</div>
-            <div className="text-sm text-gray-500">Типов действий</div>
+          <div className="stat-card">
+            <div className="stat-value">{stats.actions.length}</div>
+            <div className="stat-label">Действий</div>
           </div>
         </div>
       )}
 
-      <div className="overflow-x-auto">
-        <table className="w-full text-left">
+      <div style={{ overflowX: 'auto' }}>
+        <table className="tg-table">
           <thead>
-            <tr className="border-b border-gray-200">
-              <th className="py-2 px-3 text-sm font-medium text-gray-500">Имя</th>
-              <th className="py-2 px-3 text-sm font-medium text-gray-500">Фамилия</th>
-              <th className="py-2 px-3 text-sm font-medium text-gray-500">Username</th>
-              <th className="py-2 px-3 text-sm font-medium text-gray-500">Последний визит</th>
+            <tr>
+              <th>Имя</th>
+              <th>Фамилия</th>
+              <th>Username</th>
+              <th>Посл. визит</th>
             </tr>
           </thead>
           <tbody>
@@ -99,34 +106,42 @@ export default function UsersPage() {
               <React.Fragment key={user.telegram_id}>
                 <tr
                   onClick={() => toggleUser(user)}
-                  className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                  style={{ cursor: 'pointer' }}
+                  className={expandedUserId === user.telegram_id ? 'row-expanded' : ''}
                 >
-                  <td className="py-2 px-3">{user.first_name || '-'}</td>
-                  <td className="py-2 px-3">{user.last_name || '-'}</td>
-                  <td className="py-2 px-3">{user.username ? `@${user.username}` : '-'}</td>
-                  <td className="py-2 px-3 text-sm text-gray-500">
-                    {user.last_seen ? new Date(user.last_seen).toLocaleString('ru-RU') : '-'}
+                  <td>{user.first_name || '—'}</td>
+                  <td>{user.last_name || '—'}</td>
+                  <td>{user.username ? `@${user.username}` : '—'}</td>
+                  <td style={{ fontSize: 12, color: 'var(--tg-theme-hint-color)', whiteSpace: 'nowrap' }}>
+                    {user.last_seen ? new Date(user.last_seen).toLocaleString('ru-RU') : '—'}
                   </td>
                 </tr>
                 {expandedUserId === user.telegram_id && (
-                  <tr>
-                    <td colSpan={4} className="py-2 px-3 bg-gray-50">
+                  <tr className="row-expanded">
+                    <td colSpan={4} style={{ padding: '10px 12px' }}>
                       {actionsLoading ? (
-                        <div className="text-sm text-gray-500">Загрузка...</div>
+                        <div className="text-hint">Загрузка...</div>
                       ) : actions.length > 0 ? (
-                        <div className="space-y-1">
-                          <div className="text-sm font-medium mb-1">Последние действия:</div>
-                          {actions.map((a) => (
-                            <div key={a.id} className="text-sm flex justify-between">
-                              <span>{a.action}</span>
-                              <span className="text-gray-400">
-                                {new Date(a.created_at).toLocaleString('ru-RU')}
-                              </span>
-                            </div>
-                          ))}
+                        <div>
+                          <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--tg-theme-hint-color)', marginBottom: 6 }}>
+                            Последние действия:
+                          </div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                            {actions.map((a) => (
+                              <div
+                                key={a.id}
+                                style={{ display: 'flex', justifyContent: 'space-between', fontSize: 13 }}
+                              >
+                                <span style={{ color: 'var(--tg-theme-text-color)' }}>{a.action}</span>
+                                <span className="text-hint">
+                                  {new Date(a.created_at).toLocaleString('ru-RU')}
+                                </span>
+                              </div>
+                            ))}
+                          </div>
                         </div>
                       ) : (
-                        <div className="text-sm text-gray-500">Нет действий</div>
+                        <div className="text-hint">Нет действий</div>
                       )}
                     </td>
                   </tr>
@@ -138,26 +153,34 @@ export default function UsersPage() {
       </div>
 
       {users.length === 0 && !loading && (
-        <div className="text-gray-500 text-center py-8">Нет пользователей</div>
+        <div className="state-empty">Нет пользователей</div>
       )}
 
-      <div className="flex justify-between mt-4">
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginTop: 16,
+          gap: 8,
+        }}
+      >
         <button
           onClick={() => setOffset((o) => Math.max(0, o - PAGE_SIZE))}
           disabled={offset === 0}
-          className="btn btn-secondary disabled:opacity-50"
+          className="btn btn-secondary"
         >
-          &larr; Назад
+          &#8592; Назад
         </button>
-        <span className="text-sm text-gray-500 self-center">
-          {offset + 1} &ndash; {offset + users.length}
+        <span className="text-hint" style={{ fontSize: 13 }}>
+          {offset + 1}–{offset + users.length} из {total}
         </span>
         <button
           onClick={() => setOffset((o) => o + PAGE_SIZE)}
           disabled={offset + PAGE_SIZE >= total}
-          className="btn btn-secondary disabled:opacity-50"
+          className="btn btn-secondary"
         >
-          Вперёд &rarr;
+          Вперёд &#8594;
         </button>
       </div>
     </div>

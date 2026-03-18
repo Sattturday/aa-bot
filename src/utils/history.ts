@@ -56,18 +56,27 @@ export const sendStatisticsToAdmin = async (
 ) => {
   try {
     const stats = usersRepo.getStats(3);
+    const totalActions = stats.actions.reduce((sum, a) => sum + a.count, 0);
 
-    if (stats.totalActions === 0) {
-      await bot.telegram.sendMessage(tgId, 'Никто не приходил.');
+    if (totalActions === 0) {
+      await bot.telegram.sendMessage(tgId, '📊 За последние 3 часа — никто не приходил.');
       console.log('История пуста за последние 3 часа.');
-    } else {
-      const filePath = await writeHistoryToFile(bot);
-      if (filePath) {
-        await bot.telegram.sendDocument(tgId, { source: filePath });
-        try { fs.unlinkSync(filePath); } catch { /* ignore */ }
-      }
-      console.log(`Статистика отправлена: ${stats.activeUsers} пользователей, ${stats.totalActions} действий.`);
+      return;
     }
+
+    const topActions = stats.actions
+      .slice(0, 10)
+      .map((a) => `  • ${a.action} — ${a.count}`)
+      .join('\n');
+
+    const message =
+      `📊 Статистика за 3 часа:\n\n` +
+      `👥 Пользователей: ${stats.active_users}\n` +
+      `🔘 Действий: ${totalActions}\n\n` +
+      `Топ действий:\n${topActions}`;
+
+    await bot.telegram.sendMessage(tgId, message);
+    console.log(`Статистика отправлена: ${stats.active_users} пользователей, ${totalActions} действий.`);
   } catch (error) {
     console.error('Ошибка при отправке статистики администратору:', error);
   }

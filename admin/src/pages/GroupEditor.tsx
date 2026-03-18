@@ -39,6 +39,15 @@ const emptyForm: GroupForm = {
   sort_order: 0,
 };
 
+function Field({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <label style={{ display: 'block', marginBottom: 5 }}>{label}</label>
+      {children}
+    </div>
+  );
+}
+
 export default function GroupEditor() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -59,7 +68,7 @@ export default function GroupEditor() {
   async function loadGroup(groupId: number) {
     try {
       setLoading(true);
-      const data = await fetchGroup(groupId);
+      const data = await fetchGroup(groupId) as any;
       setForm({
         name: data.name || '',
         key: data.key || '',
@@ -68,15 +77,16 @@ export default function GroupEditor() {
         address: data.address || '',
         description: data.description || '',
         phone: data.phone || '',
-        map_link: data.map_link || '',
-        video_path: data.video_path || '',
-        image_url: data.image_url || '',
+        map_link: data.mapLink || data.map_link || '',
+        video_path: data.videoPath || data.video_path || '',
+        image_url: data.imageUrl || data.image_url || '',
         notes: data.notes || '',
         sort_order: data.sort_order || 0,
       });
-      if (data.schedules && data.schedules.length > 0) {
+      const sched = data.schedule || data.schedules || [];
+      if (sched.length > 0) {
         setSchedules(
-          data.schedules.map((s: any) => {
+          sched.map((s: any) => {
             let days: string[] = [];
             if (typeof s.days === 'string') {
               try { days = JSON.parse(s.days); } catch { days = s.days.split(',').filter(Boolean); }
@@ -155,138 +165,137 @@ export default function GroupEditor() {
     }
   }
 
-  if (loading) return <div className="p-4">Загрузка...</div>;
+  if (loading) return <div className="state-loading">Загрузка...</div>;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/groups" className="text-blue-500 hover:underline">&larr; Назад</Link>
-        <h1 className="text-xl font-bold">{isEdit ? 'Редактирование группы' : 'Новая группа'}</h1>
-        <div />
+    <div className="page">
+      {/* Header */}
+      <div className="page-header">
+        <Link to="/groups" className="back-link">&#8592; Назад</Link>
+        <span className="page-header-title">
+          {isEdit ? 'Редактирование' : 'Новая группа'}
+        </span>
+        <div className="page-header-side" />
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
 
-      <div className="card space-y-4">
-        <div>
-          <label className="block text-sm font-medium mb-1">Название</label>
+      <div className="form-card" style={{ marginBottom: 14 }}>
+        <Field label="Название">
           <input name="name" value={form.name} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Ключ</label>
-          <input name="key" value={form.key} onChange={handleChange} className="input" placeholder="Заполните вручную или оставьте пустым" />
-        </div>
+        <Field label="Ключ">
+          <input
+            name="key"
+            value={form.key}
+            onChange={handleChange}
+            className="input"
+            placeholder="Оставьте пустым для авто"
+          />
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Тип</label>
+        <Field label="Тип">
           <select name="type" value={form.type} onChange={handleChange} className="input">
             <option value="aa">АА</option>
             <option value="alanon">Ал-Анон</option>
           </select>
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Город</label>
+        <Field label="Город">
           <input name="city" value={form.city} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Адрес</label>
+        <Field label="Адрес">
           <input name="address" value={form.address} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Описание</label>
+        <Field label="Описание">
           <textarea name="description" value={form.description} onChange={handleChange} className="input" rows={3} />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Телефон</label>
+        <Field label="Телефон">
           <input name="phone" value={form.phone} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Ссылка на карту</label>
+        <Field label="Ссылка на карту">
           <input name="map_link" value={form.map_link} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Видео</label>
+        <Field label="Видео">
           <input name="video_path" value={form.video_path} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Изображение (URL)</label>
+        <Field label="Изображение (URL)">
           <input name="image_url" value={form.image_url} onChange={handleChange} className="input" />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Заметки</label>
+        <Field label="Заметки">
           <textarea name="notes" value={form.notes} onChange={handleChange} className="input" rows={2} />
-        </div>
+        </Field>
 
-        <div>
-          <label className="block text-sm font-medium mb-1">Порядок сортировки</label>
+        <Field label="Порядок сортировки">
           <input name="sort_order" type="number" value={form.sort_order} onChange={handleChange} className="input" />
-        </div>
+        </Field>
+      </div>
 
-        {/* Schedules */}
-        <div>
-          <label className="block text-sm font-medium mb-2">Расписание</label>
-          <div className="space-y-3">
-            {schedules.map((row, idx) => (
-              <div key={idx} className="border border-gray-200 rounded-lg p-3">
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {DAY_LABELS.map((day) => (
-                    <button
-                      key={day}
-                      type="button"
-                      onClick={() => toggleDay(idx, day)}
-                      className={`px-2 py-1 rounded text-sm ${
-                        row.days.includes(day)
-                          ? 'bg-blue-500 text-white'
-                          : 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {day}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="text"
-                    placeholder="Время (напр. 19:00)"
-                    value={row.time}
-                    onChange={(e) => updateTime(idx, e.target.value)}
-                    className="input flex-1"
-                  />
-                  {schedules.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeRow(idx)}
-                      className="btn btn-danger"
-                    >
-                      Удалить
-                    </button>
-                  )}
-                </div>
+      {/* Schedules */}
+      <div style={{ marginBottom: 14 }}>
+        <div className="section-label">Расписание</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {schedules.map((row, idx) => (
+            <div key={idx} className="schedule-row">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+                {DAY_LABELS.map((day) => (
+                  <button
+                    key={day}
+                    type="button"
+                    onClick={() => toggleDay(idx, day)}
+                    className={`day-btn${row.days.includes(day) ? ' selected' : ''}`}
+                  >
+                    {day}
+                  </button>
+                ))}
               </div>
-            ))}
-          </div>
-          <button type="button" onClick={addRow} className="btn btn-secondary mt-2">
-            + Добавить расписание
-          </button>
+              <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <input
+                  type="text"
+                  placeholder="Время (напр. 19:00)"
+                  value={row.time}
+                  onChange={(e) => updateTime(idx, e.target.value)}
+                  className="input"
+                  style={{ flex: 1 }}
+                />
+                {schedules.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeRow(idx)}
+                    className="btn btn-danger"
+                  >
+                    Удалить
+                  </button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
-
         <button
-          onClick={handleSave}
-          disabled={saving}
-          className="btn btn-primary w-full"
+          type="button"
+          onClick={addRow}
+          className="btn btn-secondary"
+          style={{ marginTop: 8 }}
         >
-          {saving ? 'Сохранение...' : 'Сохранить'}
+          + Добавить расписание
         </button>
       </div>
+
+      <button
+        onClick={handleSave}
+        disabled={saving}
+        className="btn btn-primary btn-full"
+      >
+        {saving ? 'Сохранение...' : 'Сохранить'}
+      </button>
     </div>
   );
 }

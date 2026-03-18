@@ -1,23 +1,35 @@
 import { Link } from 'react-router-dom';
 
 const cards = [
-  { title: 'Группы', icon: '\uD83D\uDC65', path: '/groups' },
-  { title: 'Сообщения', icon: '\uD83D\uDCAC', path: '/messages' },
-  { title: 'Ссылки', icon: '\uD83D\uDD17', path: '/urls' },
-  { title: 'Настройки', icon: '\u2699\uFE0F', path: '/settings' },
-  { title: 'Админы', icon: '\uD83D\uDEE1\uFE0F', path: '/admins' },
-  { title: 'Пользователи', icon: '\uD83D\uDC64', path: '/users' },
+  { title: 'Группы', description: 'Управление группами АА и Ал-Анон', icon: '👥', path: '/groups' },
+  { title: 'Сообщения', description: 'Тексты бота для пользователей', icon: '💬', path: '/messages' },
+  { title: 'Ссылки', description: 'Внешние ссылки и URL', icon: '🔗', path: '/urls' },
+  { title: 'Настройки', description: 'Общие настройки бота', icon: '⚙️', path: '/settings' },
+  { title: 'Админы', description: 'Управление администраторами', icon: '🛡️', path: '/admins' },
+  { title: 'Пользователи', description: 'Статистика и действия', icon: '👤', path: '/users' },
 ];
 
 export default function Dashboard() {
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold mb-6">Админ-панель</h1>
-      <div className="grid grid-cols-2 gap-4">
+    <div className="page">
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ fontSize: 20, fontWeight: 700, color: 'var(--tg-theme-text-color)', marginBottom: 2 }}>
+          Админ-панель
+        </div>
+        <div className="text-hint">Управление ботом АА</div>
+      </div>
+      <div
+        style={{
+          display: 'grid',
+          gridTemplateColumns: '1fr 1fr',
+          gap: 10,
+        }}
+      >
         {cards.map((c) => (
-          <Link key={c.path} to={c.path} className="card flex flex-col items-center justify-center py-6 hover:shadow-md transition-shadow">
-            <span className="text-3xl mb-2">{c.icon}</span>
-            <span className="font-medium">{c.title}</span>
+          <Link key={c.path} to={c.path} className="dash-card">
+            <span className="dash-card-icon">{c.icon}</span>
+            <span className="dash-card-title">{c.title}</span>
+            <span className="dash-card-desc">{c.description}</span>
           </Link>
         ))}
       </div>

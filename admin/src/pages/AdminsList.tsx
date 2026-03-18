@@ -11,6 +11,7 @@ export default function AdminsList() {
   const [formTgId, setFormTgId] = useState('');
   const [formName, setFormName] = useState('');
   const [saving, setSaving] = useState(false);
+  const [confirmId, setConfirmId] = useState<number | null>(null);
 
   useEffect(() => {
     loadAdmins();
@@ -46,7 +47,12 @@ export default function AdminsList() {
   }
 
   async function handleDelete(telegramId: number) {
-    if (!confirm('Удалить админа?')) return;
+    if (confirmId !== telegramId) {
+      setConfirmId(telegramId);
+      setTimeout(() => setConfirmId((prev) => (prev === telegramId ? null : prev)), 3000);
+      return;
+    }
+    setConfirmId(null);
     try {
       await removeAdmin(telegramId);
       setAdmins((prev) => prev.filter((a) => a.telegram_id !== telegramId));
@@ -55,33 +61,42 @@ export default function AdminsList() {
     }
   }
 
-  if (loading) return <div className="p-4">Загрузка...</div>;
+  if (loading) return <div className="state-loading">Загрузка...</div>;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/" className="text-blue-500 hover:underline">&larr; Назад</Link>
-        <h1 className="text-xl font-bold">Админы</h1>
-        <button onClick={() => setShowForm(!showForm)} className="btn btn-primary">
-          Добавить
-        </button>
+    <div className="page">
+      <div className="page-header">
+        <Link to="/" className="back-link">&#8592; Назад</Link>
+        <span className="page-header-title">Админы</span>
+        <div className="page-header-side">
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="btn btn-primary btn-primary-sm"
+          >
+            {showForm ? 'Отмена' : '+ Добавить'}
+          </button>
+        </div>
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
 
       {showForm && (
-        <div className="card mb-4 space-y-3">
-          <div>
-            <label className="block text-sm font-medium mb-1">Telegram ID</label>
+        <div className="form-card" style={{ marginBottom: 12 }}>
+          <div className="text-hint" style={{ marginBottom: 12 }}>
+            Введите Telegram ID нового админа. Узнать ID можно через бот @userinfobot. После добавления админ увидит кнопку «Админ-панель» в боте и сможет войти без пароля.
+          </div>
+          <div style={{ marginBottom: 10 }}>
+            <label style={{ display: 'block', marginBottom: 5 }}>Telegram ID</label>
             <input
               value={formTgId}
               onChange={(e) => setFormTgId(e.target.value)}
               className="input"
               placeholder="123456789"
+              inputMode="numeric"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium mb-1">Имя</label>
+          <div style={{ marginBottom: 12 }}>
+            <label style={{ display: 'block', marginBottom: 5 }}>Имя</label>
             <input
               value={formName}
               onChange={(e) => setFormName(e.target.value)}
@@ -89,34 +104,36 @@ export default function AdminsList() {
               placeholder="Имя админа"
             />
           </div>
-          <div className="flex gap-2">
-            <button onClick={handleAdd} disabled={saving} className="btn btn-primary">
-              {saving ? 'Сохранение...' : 'Сохранить'}
-            </button>
-            <button onClick={() => setShowForm(false)} className="btn btn-secondary">
-              Отмена
-            </button>
-          </div>
+          <button
+            onClick={handleAdd}
+            disabled={saving}
+            className="btn btn-primary btn-full"
+          >
+            {saving ? 'Сохранение...' : 'Сохранить'}
+          </button>
         </div>
       )}
 
-      <div className="space-y-3">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {admins.map((admin) => (
-          <div key={admin.telegram_id} className="card flex items-center justify-between">
-            <div>
-              <div className="font-medium">{admin.name || 'Без имени'}</div>
-              <div className="text-sm text-gray-500">ID: {admin.telegram_id}</div>
+          <div key={admin.telegram_id} className="list-item" style={{ gap: 10 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <div style={{ fontWeight: 500, fontSize: 15, color: 'var(--tg-theme-text-color)' }}>
+                {admin.name || 'Без имени'}
+              </div>
+              <div className="text-hint">ID: {admin.telegram_id}</div>
             </div>
             <button
               onClick={() => handleDelete(admin.telegram_id)}
-              className="btn btn-danger ml-2"
+              className="btn btn-danger"
+              style={{ flexShrink: 0 }}
             >
-              Удалить
+              {confirmId === admin.telegram_id ? 'Точно?' : 'Удалить'}
             </button>
           </div>
         ))}
         {admins.length === 0 && (
-          <div className="text-gray-500 text-center py-8">Нет админов</div>
+          <div className="state-empty">Нет админов</div>
         )}
       </div>
     </div>

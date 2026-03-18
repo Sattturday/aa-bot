@@ -15,6 +15,7 @@ export default function GroupsList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [tab, setTab] = useState('all');
+  const [confirmId, setConfirmId] = useState<number | null>(null);
 
   useEffect(() => {
     loadGroups();
@@ -33,7 +34,12 @@ export default function GroupsList() {
   }
 
   async function handleDelete(id: number) {
-    if (!confirm('Удалить группу?')) return;
+    if (confirmId !== id) {
+      setConfirmId(id);
+      setTimeout(() => setConfirmId((prev) => (prev === id ? null : prev)), 3000);
+      return;
+    }
+    setConfirmId(null);
     try {
       await deleteGroup(id);
       setGroups((prev) => prev.filter((g) => g.id !== id));
@@ -44,39 +50,46 @@ export default function GroupsList() {
 
   const filtered = tab === 'all' ? groups : groups.filter((g) => g.type === tab);
 
-  if (loading) return <div className="p-4">Загрузка...</div>;
+  if (loading) return <div className="state-loading">Загрузка...</div>;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/" className="text-blue-500 hover:underline">&larr; Назад</Link>
-        <h1 className="text-xl font-bold">Группы</h1>
-        <Link to="/groups/new" className="btn btn-primary">Добавить группу</Link>
+    <div className="page">
+      {/* Header */}
+      <div className="page-header">
+        <Link to="/" className="back-link">&#8592; Назад</Link>
+        <span className="page-header-title">Группы</span>
+        <div className="page-header-side">
+          <Link to="/groups/new" className="btn btn-primary btn-primary-sm">+ Добавить</Link>
+        </div>
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
 
-      <div className="flex gap-2 mb-4">
+      {/* Tab bar */}
+      <div className="tab-bar">
         {TABS.map((t) => (
           <button
             key={t.value}
             onClick={() => setTab(t.value)}
-            className={`btn ${tab === t.value ? 'btn-primary' : 'btn-secondary'}`}
+            className={`tab-btn${tab === t.value ? ' active' : ''}`}
           >
             {t.label}
           </button>
         ))}
       </div>
 
-      <div className="space-y-3">
+      {/* List */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
         {filtered.map((g) => (
-          <div key={g.id} className="card flex items-center justify-between">
+          <div key={g.id} className="list-item" style={{ gap: 10 }}>
             <div
-              className="flex-1 cursor-pointer"
+              style={{ flex: 1, cursor: 'pointer', minWidth: 0 }}
               onClick={() => navigate(`/groups/${g.id}/edit`)}
             >
-              <div className="font-medium">{g.name}</div>
-              <div className="text-sm text-gray-500">
+              <div style={{ fontWeight: 500, fontSize: 15, color: 'var(--tg-theme-text-color)', marginBottom: 2 }}>
+                {g.name}
+              </div>
+              <div className="text-hint" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {g.city}
                 {g.schedules && g.schedules.length > 0 && (
                   <> &middot; {g.schedules.map((s) => `${s.days} ${s.time}`).join(', ')}</>
@@ -85,14 +98,15 @@ export default function GroupsList() {
             </div>
             <button
               onClick={() => handleDelete(g.id)}
-              className="btn btn-danger ml-2"
+              className="btn btn-danger"
+              style={{ flexShrink: 0 }}
             >
-              Удалить
+              {confirmId === g.id ? 'Точно?' : 'Удалить'}
             </button>
           </div>
         ))}
         {filtered.length === 0 && (
-          <div className="text-gray-500 text-center py-8">Нет групп</div>
+          <div className="state-empty">Нет групп</div>
         )}
       </div>
     </div>

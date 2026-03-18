@@ -44,44 +44,46 @@ export default function SettingsEditor() {
     }
   }
 
-  if (loading) return <div className="p-4">Загрузка...</div>;
+  if (loading) return <div className="state-loading">Загрузка...</div>;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/" className="text-blue-500 hover:underline">&larr; Назад</Link>
-        <h1 className="text-xl font-bold">Настройки</h1>
-        <div />
+    <div className="page">
+      <div className="page-header">
+        <Link to="/" className="back-link">&#8592; Назад</Link>
+        <span className="page-header-title">Настройки</span>
+        <div className="page-header-side" />
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
 
-      <div className="space-y-4">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {settings.map((entry) => (
-          <div key={entry.key} className="card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-mono text-sm text-gray-500">{entry.key}</span>
+          <div key={entry.key} className="form-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span className="key-label">{entry.key}</span>
               {successKey === entry.key && (
-                <span className="text-green-500 text-sm">Сохранено</span>
+                <span className="banner-success">Сохранено</span>
               )}
             </div>
             <input
               type="text"
               value={entry.value}
               onChange={(e) => handleChange(entry.key, e.target.value)}
-              className="input mb-2"
+              className="input"
+              style={{ marginBottom: 10 }}
             />
             <button
               onClick={() => handleSave(entry)}
               disabled={savingKey === entry.key}
               className="btn btn-primary"
+              style={{ fontSize: 13, padding: '7px 14px' }}
             >
               {savingKey === entry.key ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         ))}
         {settings.length === 0 && (
-          <div className="text-gray-500 text-center py-8">Нет настроек</div>
+          <div className="state-empty">Нет настроек</div>
         )}
       </div>
     </div>

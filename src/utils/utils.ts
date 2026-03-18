@@ -11,8 +11,9 @@ export const sendWelcomeMessage = async (ctx: Context) => {
     const rows = [...buttons.welcome];
 
     const userId = (ctx.from?.id || 0).toString();
-    if (isAdmin(userId)) {
-      rows.push([Markup.button.callback('🔧 Админ-панель', 'admin_panel')]);
+    const webAppUrl = process.env.WEBAPP_URL;
+    if (isAdmin(userId) && webAppUrl) {
+      rows.push([Markup.button.webApp('🔧 Админ-панель', webAppUrl)]);
     }
 
     await ctx.reply(message, Markup.inlineKeyboard(rows));
@@ -89,6 +90,15 @@ ${group.notes ? '🗣 ' + group.notes : ''}
   }
 };
 
+function isValidUrl(s: string): boolean {
+  try {
+    const url = new URL(s);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 // Универсальный обработчик для кнопок с изображением и группой
 export const handleGroupInfo = async (
   ctx: Context,
@@ -102,7 +112,7 @@ export const handleGroupInfo = async (
 
   const groupButtons = [
     [
-      group.mapLink
+      group.mapLink && isValidUrl(group.mapLink)
         ? Markup.button.url('🗺 Посмотреть на карте', group.mapLink)
         : Markup.button.callback(
             '🗺 Посмотреть на карте (недоступно)',
@@ -110,7 +120,7 @@ export const handleGroupInfo = async (
           ),
     ],
     [
-      group.videoPath
+      group.videoPath && isValidUrl(group.videoPath)
         ? Markup.button.url('📹 Посмотреть видео пути', group.videoPath)
         : Markup.button.callback(
             '📹 Посмотреть видео пути (недоступно)',

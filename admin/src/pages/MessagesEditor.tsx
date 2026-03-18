@@ -3,12 +3,31 @@ import { Link } from 'react-router-dom';
 import { fetchMessages, updateMessage } from '../api/client';
 import type { MessageRow } from '../api/client';
 
+// Сообщения, которые имеет смысл редактировать, с понятными подписями
+const MESSAGE_LABELS: Record<string, string> = {
+  start: 'Приветственное сообщение (/start)',
+  group_schedule: 'Заголовок расписания групп',
+  newbie: 'Текст для новичков',
+  participant: 'Текст для членов АА',
+  relative: 'Текст для родственников',
+  about_aa: 'О программе АА',
+  want_to_quit: 'Хочу бросить пить',
+  what_to_expect: 'Что ждать от собрания',
+  service: 'Хочу взять служение',
+  alanon: 'Ал-Анон',
+  open_meeting: 'Открытое собрание',
+  steps: '12 шагов',
+  step_11_am: '11 шаг (утро)',
+  step_11_pm: '11 шаг (вечер)',
+};
+
 export default function MessagesEditor() {
   const [messages, setMessages] = useState<MessageRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [savingKey, setSavingKey] = useState<string | null>(null);
   const [successKey, setSuccessKey] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     loadMessages();
@@ -46,46 +65,62 @@ export default function MessagesEditor() {
     }
   }
 
-  if (loading) return <div className="p-4">Загрузка...</div>;
+  const filtered = showAll
+    ? messages
+    : messages.filter((m) => m.key in MESSAGE_LABELS);
+
+  if (loading) return <div className="state-loading">Загрузка...</div>;
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <div className="flex items-center justify-between mb-4">
-        <Link to="/" className="text-blue-500 hover:underline">&larr; Назад</Link>
-        <h1 className="text-xl font-bold">Сообщения</h1>
-        <div />
+    <div className="page">
+      <div className="page-header">
+        <Link to="/" className="back-link">&#8592; Назад</Link>
+        <span className="page-header-title">Сообщения</span>
+        <div className="page-header-side" />
       </div>
 
-      {error && <div className="text-red-500 mb-4">{error}</div>}
+      {error && <div className="banner-error">{error}</div>}
 
-      <div className="space-y-4">
-        {messages.map((msg) => (
-          <div key={msg.key} className="card">
-            <div className="flex items-center justify-between mb-2">
-              <span className="font-mono text-sm text-gray-500">{msg.key}</span>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        {filtered.map((msg) => (
+          <div key={msg.key} className="form-card">
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+              <span style={{ fontSize: 14, fontWeight: 500, color: 'var(--tg-theme-text-color)' }}>
+                {MESSAGE_LABELS[msg.key] || msg.key}
+              </span>
               {successKey === msg.key && (
-                <span className="text-green-500 text-sm">Сохранено</span>
+                <span className="banner-success">Сохранено</span>
               )}
             </div>
             <textarea
               value={msg.value}
               onChange={(e) => handleChange(msg.key, e.target.value)}
-              className="input mb-2"
+              className="input"
               rows={4}
+              style={{ marginBottom: 10 }}
             />
             <button
               onClick={() => handleSave(msg)}
               disabled={savingKey === msg.key}
               className="btn btn-primary"
+              style={{ fontSize: 13, padding: '7px 14px' }}
             >
               {savingKey === msg.key ? 'Сохранение...' : 'Сохранить'}
             </button>
           </div>
         ))}
-        {messages.length === 0 && (
-          <div className="text-gray-500 text-center py-8">Нет сообщений</div>
+        {filtered.length === 0 && (
+          <div className="state-empty">Нет сообщений</div>
         )}
       </div>
+
+      <button
+        onClick={() => setShowAll(!showAll)}
+        className="btn btn-secondary"
+        style={{ marginTop: 12, width: '100%' }}
+      >
+        {showAll ? 'Скрыть остальные' : `Показать все (${messages.length})`}
+      </button>
     </div>
   );
 }
