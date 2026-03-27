@@ -2,7 +2,6 @@ import { Context, Markup, Telegraf } from 'telegraf';
 import { addToHistory } from './history';
 import { buttons } from '../data/buttons';
 import { Update } from 'telegraf/typings/core/types/typegram';
-import { urls } from '../data/urls';
 import { buttonKeys } from '../data/buttonKeys';
 import { pushToStack, popFromStack, clearUserNavigationStack } from '..';
 import {
@@ -11,20 +10,45 @@ import {
   handleGroupInfo,
   sendWelcomeMessage,
 } from './utils';
-import { messages } from '../data/messages';
-import { aaGroups } from '../data/groups';
+import {
+  getAaGroups,
+  getGroupScheduleKeys,
+  getUrlValue,
+  getMessageText,
+} from '../db/dataProvider';
+import { isAdmin } from '../db/adminsRepo';
+
+function getUserInfo(ctx: Context) {
+  const userId = (ctx.from?.id || 0).toString();
+  const firstName = ctx.from?.first_name || '';
+  const lastName = ctx.from?.last_name || '';
+  const username = ctx.from?.username || '';
+  return { userId, firstName, lastName, username };
+}
+
+function track(ctx: Context, action: string) {
+  const { userId, firstName, lastName, username } = getUserInfo(ctx);
+  addToHistory(userId, action, firstName, lastName, username);
+}
 
 export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
+  // no_action — заглушка для недоступных кнопок
+  bot.action('no_action', async ctx => {
+    await ctx.answerCbQuery('Пока недоступно');
+  });
+
   // Регистрация обработчика для /start
   bot.start(async ctx => {
     const firstName = ctx.from?.first_name || 'друг';
     const message = `👋 Привет, ${firstName}!`;
     const keyboard = Markup.inlineKeyboard(buttons.start).reply_markup;
 
+    track(ctx, '/start');
+
     await ctx.replyWithPhoto(
-      { url: urls.welcome },
+      { url: getUrlValue('welcome') },
       {
-        caption: message + messages.start,
+        caption: message + getMessageText('start'),
         reply_markup: keyboard,
       },
     );
@@ -34,9 +58,10 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.start.forEach(key => {
     bot.action(key, async ctx => {
       try {
-        const userId: number | string = ctx.from?.id || 'Не указано';
-        pushToStack(userId.toString(), 'start');
-        addToHistory(userId.toString(), key);
+        await ctx.answerCbQuery();
+        const { userId } = getUserInfo(ctx);
+        pushToStack(userId, 'start');
+        track(ctx, key);
 
         await ctx.deleteMessage();
         await sendWelcomeMessage(ctx);
@@ -53,9 +78,10 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.welcome.forEach(key => {
     bot.action(key, async ctx => {
       try {
-        const userId: number | string = ctx.from?.id || 'Не указано';
-        pushToStack(userId.toString(), 'welcome');
-        addToHistory(userId.toString(), key);
+        await ctx.answerCbQuery();
+        const { userId } = getUserInfo(ctx);
+        pushToStack(userId, 'welcome');
+        track(ctx, key);
 
         await handleButtonAction(ctx, key);
       } catch (error) {
@@ -70,17 +96,17 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // Регистрация обработчиков для кнопок Новичок
   buttonKeys.newbie.forEach(key => {
     bot.action(key, async ctx => {
-      const userId: number | string = ctx.from?.id || 'Не указано';
-      pushToStack(userId.toString(), 'newbie');
-      addToHistory(userId.toString(), key);
+      await ctx.answerCbQuery();
+      const { userId } = getUserInfo(ctx);
+      pushToStack(userId, 'newbie');
+      track(ctx, key);
 
       try {
         if (key === 'newbie_group_schedule') {
-          console.log('Открытие расписания для новичка');
           await handleButtonActionWithImage(
             ctx,
             'group_schedule',
-            urls.group_schedule,
+            getUrlValue('group_schedule'),
           );
         } else if (key === 'newbie_about_aa' || key === 'newbie_literature') {
           await handleButtonAction(ctx, key.slice(7));
@@ -99,17 +125,17 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   // Регистрация обработчиков для кнопок Член АА
   buttonKeys.participant.forEach(key => {
     bot.action(key, async ctx => {
-      const userId: number | string = ctx.from?.id || 'Не указано';
-      pushToStack(userId.toString(), 'participant'); // Добавляем состояние "participant"
-      addToHistory(userId.toString(), key);
+      await ctx.answerCbQuery();
+      const { userId } = getUserInfo(ctx);
+      pushToStack(userId, 'participant');
+      track(ctx, key);
 
       try {
         if (key === 'participant_group_schedule') {
-          console.log('Открытие расписания для участника');
           await handleButtonActionWithImage(
             ctx,
             'group_schedule',
-            urls.group_schedule,
+            getUrlValue('group_schedule'),
           );
         } else if (key === 'participant_literature') {
           await handleButtonAction(ctx, key.slice(12));
@@ -129,9 +155,10 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.faq.forEach(key => {
     bot.action(key, async ctx => {
       try {
-        const userId: number | string = ctx.from?.id || 'Не указано';
-        pushToStack(userId.toString(), 'faq');
-        addToHistory(userId.toString(), key);
+        await ctx.answerCbQuery();
+        const { userId } = getUserInfo(ctx);
+        pushToStack(userId, 'faq');
+        track(ctx, key);
 
         await handleButtonAction(ctx, key);
       } catch (error) {
@@ -147,9 +174,10 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
   buttonKeys.about_aa.forEach(key => {
     bot.action(key, async ctx => {
       try {
-        const userId: number | string = ctx.from?.id || 'Не указано';
-        pushToStack(userId.toString(), 'about_aa');
-        addToHistory(userId.toString(), key);
+        await ctx.answerCbQuery();
+        const { userId } = getUserInfo(ctx);
+        pushToStack(userId, 'about_aa');
+        track(ctx, key);
 
         await handleButtonAction(ctx, key);
       } catch (error) {
@@ -161,31 +189,54 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
     });
   });
 
-  // Регистрация обработчиков для кнопок Группа ...
-  buttonKeys.group_schedule.forEach(key => {
-    bot.action(key, async ctx => {
-      try {
-        const userId: number | string = ctx.from?.id || 'Не указано';
-        pushToStack(userId.toString(), 'group_schedule');
-        addToHistory(userId.toString(), key);
+  // Регистрация обработчиков для кнопок Группа (динамически из БД)
+  const registerGroupHandlers = () => {
+    const groupKeys = getGroupScheduleKeys();
+    groupKeys.forEach(key => {
+      bot.action(key, async ctx => {
+        try {
+          await ctx.answerCbQuery();
+          const { userId } = getUserInfo(ctx);
+          pushToStack(userId, 'group_schedule');
+          track(ctx, key);
 
-        await handleGroupInfo(ctx, key, aaGroups);
-      } catch (error) {
-        console.error(
-          `Ошибка при регистрации обработчика для кнопки ${key}:`,
-          error,
-        );
-      }
+          await handleGroupInfo(ctx, key, getAaGroups());
+        } catch (error) {
+          console.error(
+            `Ошибка при регистрации обработчика для кнопки ${key}:`,
+            error,
+          );
+        }
+      });
     });
+  };
+
+  registerGroupHandlers();
+
+  // Catch-all for dynamic group keys that weren't registered at startup
+  // (groups added via admin panel after bot starts)
+  bot.action(/^group_/, async ctx => {
+    try {
+      await ctx.answerCbQuery();
+      const key = ctx.match[0];
+      const { userId } = getUserInfo(ctx);
+      pushToStack(userId, 'group_schedule');
+      track(ctx, key);
+
+      await handleGroupInfo(ctx, key, getAaGroups());
+    } catch (error) {
+      console.error('Ошибка при обработке динамической группы:', error);
+    }
   });
 
   // Регистрация обработчиков для кнопок Родственник
   buttonKeys.relative.forEach(key => {
     bot.action(key, async ctx => {
       try {
-        const userId: number | string = ctx.from?.id || 'Не указано';
-        pushToStack(userId.toString(), 'relative');
-        addToHistory(userId.toString(), key);
+        await ctx.answerCbQuery();
+        const { userId } = getUserInfo(ctx);
+        pushToStack(userId, 'relative');
+        track(ctx, key);
 
         if (key === 'relative_about_aa') {
           await handleButtonAction(ctx, key.slice(9));
@@ -201,18 +252,17 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
     });
   });
 
-  // Обработка нажатий на кнопку "Назад" для возврата к предыдущему сообщению
+  // Обработка нажатий на кнопку "Назад"
   bot.action('back', async ctx => {
     try {
-      const previousState = popFromStack(ctx.from.id.toString()); // Извлекаем предыдущее состояние
-      const userId: number | string = ctx.from?.id || 'Не указано';
-      addToHistory(userId.toString(), 'back');
+      await ctx.answerCbQuery();
+      const previousState = popFromStack((ctx.from?.id || 0).toString());
+      track(ctx, 'back');
 
       if (previousState) {
-        // В зависимости от предыдущего состояния, отправляем соответствующее сообщение
         if (previousState === 'welcome') {
           await ctx.deleteMessage();
-          clearUserNavigationStack(ctx.from.id.toString());
+          clearUserNavigationStack((ctx.from?.id || 0).toString());
           await sendWelcomeMessage(ctx);
         } else {
           await handleButtonAction(ctx, previousState);
@@ -226,10 +276,31 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
     }
   });
 
-  // Обработка других сообщений (если пользователь напишет что-то другое)
+  // Кнопка админ-панели
+  bot.action('admin_panel', async ctx => {
+    try {
+      const { userId } = getUserInfo(ctx);
+      if (!isAdmin(userId)) {
+        await ctx.answerCbQuery('У вас нет доступа к админ-панели.');
+        return;
+      }
+      track(ctx, 'admin_panel');
+      const webAppUrl = process.env.WEBAPP_URL;
+      if (webAppUrl) {
+        await ctx.reply('Откройте админ-панель:', Markup.inlineKeyboard([
+          [Markup.button.webApp('🔧 Админ-панель', webAppUrl)],
+        ]));
+      } else {
+        await ctx.reply('Админ-панель не настроена. Укажите WEBAPP_URL.');
+      }
+    } catch (error) {
+      console.error('Ошибка при открытии админ-панели:', error);
+    }
+  });
+
+  // Обработка текстовых сообщений
   bot.on('text', async ctx => {
-    const userId: number | string = ctx.from?.id || 'Не указано';
-    addToHistory(userId.toString(), 'text: ' + ctx.message.text);
+    track(ctx, 'text: ' + ctx.message.text);
 
     try {
       await sendWelcomeMessage(ctx);
@@ -238,21 +309,20 @@ export const registerButtonHandlers = (bot: Telegraf<Context<Update>>) => {
     }
   });
 
-  // Обработка всех других возможных обращений (например, неизвестных кнопок, типов сообщений и т.д.)
+  // Обработка всех других сообщений
   bot.on('message', async ctx => {
-    const userId: number | string = ctx.from?.id || 'Не указано';
-    addToHistory(userId.toString(), 'unknown_message');
+    track(ctx, 'unknown_message');
 
     try {
       await ctx.reply(
-        `🤔 Я пока не могу обработать это сообщение.  
+        `🤔 Я пока не могу обработать это сообщение.
 
-Но я могу помочь вам вернуться в главное меню или связаться с участником АА (алкоголиком, который не пьет). 
+Но я могу помочь вам вернуться в главное меню или связаться с участником АА (алкоголиком, который не пьет).
 
 Выберите, пожалуйста, подходящий вариант:`,
         Markup.inlineKeyboard([
           [Markup.button.callback('🏠 Главное меню', 'back')],
-          [Markup.button.url('💬 Связаться с участником АА', urls.question)],
+          [Markup.button.url('💬 Связаться с участником АА', getUrlValue('question'))],
         ]),
       );
     } catch (error) {

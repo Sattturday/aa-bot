@@ -1,0 +1,442 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Telegram Mini App theme variables - fallbacks for browser preview */
+:root {
+  --tg-theme-bg-color: #f5f5f5;
+  --tg-theme-text-color: #1a1a1a;
+  --tg-theme-hint-color: #888888;
+  --tg-theme-link-color: #2481cc;
+  --tg-theme-button-color: #2481cc;
+  --tg-theme-button-text-color: #ffffff;
+  --tg-theme-secondary-bg-color: #e8e8e8;
+  --tg-theme-header-bg-color: #f5f5f5;
+  --tg-theme-accent-text-color: #2481cc;
+  --tg-theme-section-bg-color: #ffffff;
+  --tg-theme-section-header-text-color: #888888;
+  --tg-theme-section-separator-color: #e0e0e0;
+  --tg-theme-subtitle-text-color: #888888;
+  --tg-theme-destructive-text-color: #e53935;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Page container ────────────────────────────────────────── */
+.page {
+  padding: 12px 16px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* ── Page header ───────────────────────────────────────────── */
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  min-height: 36px;
+}
+
+.page-header-title {
+  flex: 1;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--tg-theme-text-color);
+  text-align: center;
+}
+
+.page-header-side {
+  min-width: 72px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── Back link ─────────────────────────────────────────────── */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 15px;
+  color: var(--tg-theme-link-color);
+  text-decoration: none;
+  min-width: 72px;
+  white-space: nowrap;
+}
+
+.back-link:active {
+  opacity: 0.6;
+}
+
+/* ── Section card (replaces .card) ────────────────────────── */
+.section {
+  background-color: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color));
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+/* Individual row inside a section */
+.section-row {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.08));
+}
+
+.section-row:last-child {
+  border-bottom: none;
+}
+
+/* ── List item card ─────────────────────────────────────────── */
+.list-item {
+  background-color: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color));
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+}
+
+/* ── Form card ──────────────────────────────────────────────── */
+.form-card {
+  background-color: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color));
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+/* ── Hint / secondary text ──────────────────────────────────── */
+.text-hint {
+  color: var(--tg-theme-hint-color);
+  font-size: 13px;
+}
+
+.text-accent {
+  color: var(--tg-theme-accent-text-color, var(--tg-theme-link-color));
+}
+
+/* ── Inputs ─────────────────────────────────────────────────── */
+.input {
+  width: 100%;
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.15));
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-text-color);
+  font-size: 16px;
+  font-family: inherit;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  -webkit-appearance: none;
+}
+
+.input:focus,
+.input-focused {
+  outline: none;
+  border-color: #2481cc;
+  box-shadow: 0 0 0 3px rgba(36, 129, 204, 0.25);
+}
+
+.input::placeholder {
+  color: var(--tg-theme-hint-color);
+}
+
+textarea.input {
+  resize: vertical;
+  line-height: 1.5;
+}
+
+select.input {
+  cursor: pointer;
+}
+
+/* ── Labels ─────────────────────────────────────────────────── */
+label, .label {
+  color: var(--tg-theme-text-color);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────  */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.15s;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn:active {
+  opacity: 0.7;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+.btn-primary {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+}
+
+.btn-primary:hover:not(:disabled) {
+  opacity: 0.88;
+}
+
+/* Compact primary for headers */
+.btn-primary-sm {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.btn-secondary {
+  background-color: var(--tg-theme-secondary-bg-color);
+  color: var(--tg-theme-text-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+/* Subtle danger - text only with destructive color */
+.btn-danger {
+  background-color: transparent;
+  color: var(--tg-theme-destructive-text-color, #e53935);
+  padding: 6px 8px;
+  font-size: 13px;
+  border: 1px solid var(--tg-theme-destructive-text-color, #e53935);
+  border-radius: 6px;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--tg-theme-destructive-text-color, #e53935);
+  color: #ffffff;
+}
+
+/* Full-width action button at bottom of form */
+.btn-full {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  border-radius: 10px;
+}
+
+/* ── Tab bar ─────────────────────────────────────────────────── */
+.tab-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+  background-color: var(--tg-theme-secondary-bg-color);
+  border-radius: 9px;
+  padding: 3px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 7px;
+  border: none;
+  font-size: 13px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  background-color: transparent;
+  color: var(--tg-theme-hint-color);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab-btn.active {
+  background-color: var(--tg-theme-section-bg-color, #fff);
+  color: var(--tg-theme-text-color);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+
+/* ── Error / success banners ────────────────────────────────── */
+.banner-error {
+  background-color: rgba(229, 57, 53, 0.12);
+  color: var(--tg-theme-destructive-text-color, #e53935);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.banner-success {
+  color: #4caf50;
+  font-size: 12px;
+}
+
+/* ── Loading / empty states ─────────────────────────────────── */
+.state-loading,
+.state-empty {
+  padding: 32px 0;
+  text-align: center;
+  color: var(--tg-theme-hint-color);
+  font-size: 14px;
+}
+
+/* ── Stat card (UsersPage) ──────────────────────────────────── */
+.stat-card {
+  background-color: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color));
+  border-radius: 12px;
+  padding: 12px;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--tg-theme-text-color);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--tg-theme-hint-color);
+  margin-top: 2px;
+}
+
+/* ── Table (UsersPage) ──────────────────────────────────────── */
+.tg-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.tg-table th {
+  padding: 8px 10px;
+  text-align: left;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tg-theme-hint-color);
+  border-bottom: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.1));
+  white-space: nowrap;
+}
+
+.tg-table td {
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.06));
+  color: var(--tg-theme-text-color);
+}
+
+.tg-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.tg-table tbody tr:hover {
+  background-color: var(--tg-theme-secondary-bg-color);
+}
+
+.tg-table .row-expanded td {
+  background-color: var(--tg-theme-secondary-bg-color);
+}
+
+/* ── Day picker buttons (GroupEditor schedule) ──────────────── */
+.day-btn {
+  padding: 5px 9px;
+  border-radius: 6px;
+  border: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.15));
+  background-color: var(--tg-theme-bg-color);
+  color: var(--tg-theme-hint-color);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background-color 0.12s, color 0.12s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.day-btn.selected {
+  background-color: var(--tg-theme-button-color);
+  color: var(--tg-theme-button-text-color);
+  border-color: var(--tg-theme-button-color);
+}
+
+/* ── Dashboard grid cards ───────────────────────────────────── */
+.dash-card {
+  background-color: var(--tg-theme-section-bg-color, var(--tg-theme-secondary-bg-color));
+  border-radius: 14px;
+  padding: 18px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  text-decoration: none;
+  color: var(--tg-theme-text-color);
+  transition: opacity 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.dash-card:active {
+  opacity: 0.65;
+}
+
+.dash-card-icon {
+  font-size: 30px;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.dash-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--tg-theme-text-color);
+}
+
+.dash-card-desc {
+  font-size: 11px;
+  color: var(--tg-theme-hint-color);
+  margin-top: 3px;
+}
+
+/* ── Mono key label ─────────────────────────────────────────── */
+.key-label {
+  font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 12px;
+  color: var(--tg-theme-hint-color);
+  background-color: var(--tg-theme-secondary-bg-color);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+/* ── Schedule row container ─────────────────────────────────── */
+.schedule-row {
+  background-color: var(--tg-theme-bg-color);
+  border: 1px solid var(--tg-theme-section-separator-color, rgba(0,0,0,0.1));
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+/* ── Section header label (above groups of fields) ──────────── */
+.section-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--tg-theme-section-header-text-color, var(--tg-theme-hint-color));
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+  padding-left: 4px;
+}

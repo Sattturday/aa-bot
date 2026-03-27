@@ -4,7 +4,9 @@
     "rootDir": "./src",
     "target": "ES6",
     "module": "commonjs",
-    "strict": true
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]

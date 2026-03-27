@@ -1,14 +1,22 @@
 import { Context, Markup } from 'telegraf';
-import { messages } from '../data/messages';
-import { Groups } from '../data/groups';
+import { getMessageText, getGroupScheduleButtons } from '../db/dataProvider';
+import { isAdmin } from '../db/adminsRepo';
+import { GroupWithSchedule } from '../types';
 import { buttons } from '../data/buttons';
 
 // Главное меню
 export const sendWelcomeMessage = async (ctx: Context) => {
   try {
     const message = 'Выбери подходящий вариант и нажми на кнопку ниже 👇';
+    const rows = [...buttons.welcome];
 
-    await ctx.reply(message, Markup.inlineKeyboard(buttons.welcome));
+    const userId = (ctx.from?.id || 0).toString();
+    const webAppUrl = process.env.WEBAPP_URL;
+    if (isAdmin(userId) && webAppUrl) {
+      rows.push([Markup.button.webApp('🔧 Админ-панель', webAppUrl)]);
+    }
+
+    await ctx.reply(message, Markup.inlineKeyboard(rows));
   } catch (error) {
     console.error('Ошибка при отправке приветственного сообщения:', error);
   }
@@ -19,8 +27,13 @@ export const handleButtonAction = async (ctx: Context, key: string) => {
   try {
     await ctx.deleteMessage();
 
-    await ctx.reply(messages[key], Markup.inlineKeyboard(buttons[key]));
-    // await forwardMessageToAdmin(ctx, key);
+    const message = getMessageText(key);
+    // For group_schedule, use dynamic buttons; otherwise use static
+    const keyboard = key === 'group_schedule'
+      ? Markup.inlineKeyboard(getGroupScheduleButtons())
+      : Markup.inlineKeyboard(buttons[key]);
+
+    await ctx.reply(message, keyboard);
   } catch (error) {
     console.error(`Ошибка при обработке действия кнопки ${key}:`, error);
   }
@@ -34,19 +47,18 @@ export const handleButtonActionWithImage = async (
 ) => {
   try {
     await ctx.deleteMessage();
-    const message = messages[key]; // Получаем текст сообщения по ключу
-    const keyboard = Markup.inlineKeyboard(buttons[key]); // Получаем кнопки по ключу
+    const message = getMessageText(key);
+    const keyboard = key === 'group_schedule'
+      ? Markup.inlineKeyboard(getGroupScheduleButtons())
+      : Markup.inlineKeyboard(buttons[key]);
 
-    // Отправка изображения вместе с сообщением
     await ctx.replyWithPhoto(
-      { url: imageUrl }, // URL изображения
+      { url: imageUrl },
       {
         caption: message,
-        reply_markup: keyboard.reply_markup, // Используем созданную клавиатуру
+        reply_markup: keyboard.reply_markup,
       },
     );
-
-    // await forwardMessageToAdmin(ctx, key);
   } catch (error) {
     console.error(
       `Ошибка при обработке действия кнопки с изображением ${key}:`,
@@ -56,7 +68,7 @@ export const handleButtonActionWithImage = async (
 };
 
 // Формирование информации о группе
-export const sendGroupInfo = (key: string, groups: Groups) => {
+export const sendGroupInfo = (key: string, groups: GroupWithSchedule[]) => {
   const group = groups.find(g => g.key === key);
   if (group) {
     const message = `
@@ -78,20 +90,29 @@ ${group.notes ? '🗣 ' + group.notes : ''}
   }
 };
 
+function isValidUrl(s: string): boolean {
+  try {
+    const url = new URL(s);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 // Универсальный обработчик для кнопок с изображением и группой
 export const handleGroupInfo = async (
   ctx: Context,
   groupKey: string,
-  groups: Groups,
+  groups: GroupWithSchedule[],
 ) => {
   const group = groups.find(g => g.key === groupKey);
   if (!group) {
     return ctx.reply('Группа не найдена.');
   }
 
-  const buttons = [
+  const groupButtons = [
     [
-      group.mapLink
+      group.mapLink && isValidUrl(group.mapLink)
         ? Markup.button.url('🗺 Посмотреть на карте', group.mapLink)
         : Markup.button.callback(
             '🗺 Посмотреть на карте (недоступно)',
@@ -99,7 +120,7 @@ export const handleGroupInfo = async (
           ),
     ],
     [
-      group.videoPath
+      group.videoPath && isValidUrl(group.videoPath)
         ? Markup.button.url('📹 Посмотреть видео пути', group.videoPath)
         : Markup.button.callback(
             '📹 Посмотреть видео пути (недоступно)',
@@ -112,10 +133,10 @@ export const handleGroupInfo = async (
   try {
     await ctx.deleteMessage();
     await ctx.replyWithPhoto(
-      { url: group.imageUrl }, // URL изображения
+      { url: group.imageUrl },
       {
         caption: sendGroupInfo(groupKey, groups),
-        reply_markup: Markup.inlineKeyboard(buttons).reply_markup,
+        reply_markup: Markup.inlineKeyboard(groupButtons).reply_markup,
       },
     );
   } catch (error) {
@@ -123,13 +144,21 @@ export const handleGroupInfo = async (
       `Ошибка при обработке информации о группе ${groupKey}:`,
       error,
     );
+    // Fallback: отправляем без фото
+    try {
+      await ctx.reply(sendGroupInfo(groupKey, groups), {
+        reply_markup: Markup.inlineKeyboard(groupButtons).reply_markup,
+      });
+    } catch (fallbackError) {
+      console.error('Ошибка при отправке fallback:', fallbackError);
+    }
   }
 };
 
-// Функция для формирования сообщения с расписанием всех групп
+// Re-export for backwards compat (used in messages.ts generation)
 export function generateGroupScheduleMessage(
   header: string,
-  groups: Groups,
+  groups: GroupWithSchedule[],
 ): string {
   const groupMessages = groups
     .map((group, index) => {

@@ -1,0 +1,80 @@
+import { Request, Response } from 'express';
+import * as groupsRepo from '../db/groupsRepo';
+import { invalidateGroups } from '../db/dataProvider';
+
+export function listGroups(req: Request, res: Response): void {
+  const type = req.query.type as 'aa' | 'alanon' | undefined;
+  const groups = type ? groupsRepo.getGroupsByType(type) : groupsRepo.getAllGroups();
+  res.json(groups);
+}
+
+export function getGroup(req: Request, res: Response): void {
+  const id = parseInt(req.params.id as string, 10);
+  const group = groupsRepo.getGroupById(id);
+  if (!group) {
+    res.status(404).json({ error: 'Group not found' });
+    return;
+  }
+  res.json(group);
+}
+
+export function createGroup(req: Request, res: Response): void {
+  const { key, type, name } = req.body;
+  if (!key || typeof key !== 'string') {
+    res.status(400).json({ error: 'key is required' });
+    return;
+  }
+  if (!name || typeof name !== 'string') {
+    res.status(400).json({ error: 'name is required' });
+    return;
+  }
+  if (type !== 'aa' && type !== 'alanon') {
+    res.status(400).json({ error: 'type must be "aa" or "alanon"' });
+    return;
+  }
+  if (!/^[a-z0-9_]+$/.test(key)) {
+    res.status(400).json({ error: 'key must contain only lowercase letters, digits, and underscores' });
+    return;
+  }
+  try {
+    const group = groupsRepo.createGroup(req.body);
+    invalidateGroups();
+    res.status(201).json(group);
+  } catch (error: any) {
+    res.status(400).json({ error: error.message });
+  }
+}
+
+export function updateGroup(req: Request, res: Response): void {
+  const id = parseInt(req.params.id as string, 10);
+  const group = groupsRepo.updateGroup(id, req.body);
+  if (!group) {
+    res.status(404).json({ error: 'Group not found' });
+    return;
+  }
+  invalidateGroups();
+  res.json(group);
+}
+
+export function deleteGroup(req: Request, res: Response): void {
+  const id = parseInt(req.params.id as string, 10);
+  const deleted = groupsRepo.deleteGroup(id);
+  if (!deleted) {
+    res.status(404).json({ error: 'Group not found' });
+    return;
+  }
+  invalidateGroups();
+  res.json({ ok: true });
+}
+
+export function replaceSchedules(req: Request, res: Response): void {
+  const id = parseInt(req.params.id as string, 10);
+  const group = groupsRepo.getGroupById(id);
+  if (!group) {
+    res.status(404).json({ error: 'Group not found' });
+    return;
+  }
+  groupsRepo.replaceSchedules(id, req.body.schedules || []);
+  invalidateGroups();
+  res.json(groupsRepo.getGroupById(id));
+}
