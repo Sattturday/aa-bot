@@ -42,8 +42,8 @@
 
 ### Реализация для Пользовательской истории 1
 
-- [ ] T003 [US1] Удалить из `src/index.ts`: объявление `MAX_NAV_USERS`, переменную `userNavigationStack`, функцию `trimNavigationStack`, экспорты `pushToStack`, `popFromStack`, `clearUserNavigationStack`
-- [ ] T004 [US1] Обновить импорт в `src/utils/handlers.ts`: заменить `from '..'` на `from './navigationStack'`
+- [x] T003 [US1] Удалить из `src/index.ts`: объявление `MAX_NAV_USERS`, переменную `userNavigationStack`, функцию `trimNavigationStack`, экспорты `pushToStack`, `popFromStack`, `clearUserNavigationStack`
+- [x] T004 [US1] Обновить импорт в `src/utils/handlers.ts`: заменить `from '..'` на `from './navigationStack'`
 
 **Чекпоинт**: Пользовательская история 1 завершена — `npm run build` проходит без ошибок, все импорты указывают на `utils/navigationStack`
 
@@ -57,7 +57,7 @@
 
 ### Реализация для Пользовательской истории 2
 
-- [ ] T005 [US2] Запустить `npm run build` и убедиться, что компиляция TypeScript проходит без ошибок
+- [x] T005 [US2] Запустить `npm run build` и убедиться, что компиляция TypeScript проходит без ошибок
 - [ ] T006 [US2] Проверить вручную сценарий навигации: `/start` → кнопка уровня 1 → кнопка уровня 2 → «Назад» × 2 → возврат к главному меню
 
 **Чекпоинт**: Обе пользовательские истории завершены — рефакторинг структурно корректен и функционально эквивалентен
@@ -68,8 +68,8 @@
 
 **Цель**: Финальная проверка качества кода
 
-- [ ] T007 Запустить `cd admin && npm run lint` и убедиться в отсутствии ошибок (линтер бота не настроен)
-- [ ] T008 Обновить строку в `CLAUDE.md` (`handlers.ts imports pushToStack/popFromStack from index.ts`) — изменить на корректный путь `utils/navigationStack`
+- [x] T007 Запустить `cd admin && npm run lint` и убедиться в отсутствии ошибок (линтер бота не настроен)
+- [x] T008 Обновить строку в `CLAUDE.md` (`handlers.ts imports pushToStack/popFromStack from index.ts`) — изменить на корректный путь `utils/navigationStack`
 
 ---
 

@@ -3,7 +3,7 @@ import { addToHistory } from './history';
 import { buttons } from '../data/buttons';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { buttonKeys } from '../data/buttonKeys';
-import { pushToStack, popFromStack, clearUserNavigationStack } from '..';
+import { pushToStack, popFromStack, clearUserNavigationStack } from './navigationStack';
 import {
   handleButtonAction,
   handleButtonActionWithImage,

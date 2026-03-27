@@ -93,7 +93,7 @@ Groups are now managed via the admin Mini App or API. The bot dynamically reads 
 ### Key patterns
 
 - Some message keys (e.g., `answer_11`, `alanon`, `newbie`) are dynamically computed in `dataProvider.getMessageText()` rather than stored directly — check there before assuming a message is purely DB-driven.
-- `handlers.ts` imports `pushToStack`/`popFromStack` from `index.ts` (circular-ish dependency via re-exports). Keep stack functions in `index.ts`.
+- `handlers.ts` imports `pushToStack`/`popFromStack` from `utils/navigationStack` (выделенный модуль стека).
 - Group button keys follow the pattern `group_<slug>`. The regex catch-all `bot.action(/^group_/)` handles groups added after bot startup.
 
 ### Deployment
