@@ -5,3 +5,4 @@ package-lock.json
 data/bot.db
 data/bot.db-wal
 data/bot.db-shm
+.claude/
