@@ -154,22 +154,3 @@ export const handleGroupInfo = async (
     }
   }
 };
-
-// Re-export for backwards compat (used in messages.ts generation)
-export function generateGroupScheduleMessage(
-  header: string,
-  groups: GroupWithSchedule[],
-): string {
-  const groupMessages = groups
-    .map((group, index) => {
-      const scheduleText = group.schedule
-        .map(s => `${s.days.join(', ')} в ${s.time}`)
-        .join('; ');
-      return `${index + 1}️⃣ Группа "${group.name}"\n📍${group.address}\n🚩${
-        group.description ? group.description : '---'
-      }\n🕖 ${scheduleText}\n📞${group.phone}\n`;
-    })
-    .join('\n');
-
-  return header + groupMessages;
-}
