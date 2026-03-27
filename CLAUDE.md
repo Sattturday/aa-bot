@@ -11,6 +11,15 @@ npm run start     # Run compiled bot: node dist/index.js
 npm run docker_build  # Build Docker image
 ```
 
+Admin panel (separate React app in `admin/`):
+```bash
+cd admin && npm run dev    # Vite dev server
+cd admin && npm run build  # Build to admin/dist/ (served by Express)
+cd admin && npm run lint   # ESLint
+```
+
+No test framework is configured. No linter for the bot code.
+
 Requires Node.js 18+. Use `nvm use 18` if needed.
 
 Required `.env` file:
@@ -27,13 +36,21 @@ PORT=3000
 
 Telegram bot (Telegraf + TypeScript + Express) for the AA community. All user-facing text is in Russian. Data is stored in SQLite (better-sqlite3), editable via Telegram Mini App admin panel.
 
+Two separate codebases in one repo:
+- **Bot** (root) — Telegraf + Express, TypeScript compiled to `dist/`
+- **Admin panel** (`admin/`) — React + Vite + Tailwind, built to `admin/dist/`, served as static files by Express
+
 ### Data storage
 
-SQLite database at `data/bot.db`. Tables: `groups`, `schedules`, `messages`, `urls`, `settings`, `admins`, `users`, `user_actions`. Data is seeded from legacy static files in `src/data/` on first run.
+SQLite database at `data/bot.db`. Tables: `groups`, `schedules`, `messages`, `urls`, `settings`, `admins`, `users`, `user_actions`. Data is seeded from legacy static files in `src/data/` on first run. WAL mode enabled, foreign keys enforced.
+
+### Caching layer
+
+`DataCache` (`src/utils/cache.ts`) wraps all DB reads for the bot with a 60s TTL. Admin API writes call `invalidate*()` functions in `dataProvider.ts` to bust the cache immediately. When modifying admin API controllers, always call the appropriate invalidation function after writes.
 
 ### Navigation model
 
-Each user has a navigation stack in `userNavigationStack` in `index.ts`. Every button press pushes the current screen; "back" pops it. This is the core UX pattern.
+Each user has a navigation stack in `userNavigationStack` in `index.ts`. Every button press pushes the current screen; "back" pops it. Stack is capped at 10,000 users and trimmed automatically. This is the core UX pattern.
 
 ### Data flow
 
@@ -46,7 +63,7 @@ index.ts  →  handlers.ts  →  utils.ts
 ```
 
 - **`src/index.ts`** — Bot + Express init, DB init, seed, stack management, stats interval.
-- **`src/server.ts`** — Express app: mounts `/api` router and serves admin static files.
+- **`src/server.ts`** — Express app: mounts `/api` router and serves admin static files from `admin/dist/`.
 - **`src/db/database.ts`** — SQLite connection, table creation.
 - **`src/db/dataProvider.ts`** — Cached data accessors for bot (groups, messages, urls, settings). Caches auto-invalidate on admin API writes.
 - **`src/db/*Repo.ts`** — Repository modules: `groupsRepo`, `messagesRepo`, `urlsRepo`, `settingsRepo`, `adminsRepo`, `usersRepo`.
@@ -56,9 +73,11 @@ index.ts  →  handlers.ts  →  utils.ts
 - **`src/utils/history.ts`** — Tracks user actions to SQLite; sends stats to admin every 3h.
 - **`src/data/`** — Legacy static data files, used only by `seed.ts` for initial migration. Navigation structure (`buttons.ts`, `buttonKeys.ts`) is still static.
 
-### Admin API
+### Admin API & Auth
 
-All under `/api/`, JWT-protected (except `/api/auth/validate`). CRUD for groups, messages, urls, settings, admins. User listing and stats.
+All under `/api/`, JWT-protected (except `/api/auth/validate` and `/api/health`). Auth flow: Telegram Mini App sends `initData` → `authController` validates it using HMAC-SHA256 (5-minute window) → returns JWT (1h expiry). Only users in the `admins` table get access.
+
+CRUD endpoints for: groups (with schedule replacement), messages, urls, settings, admins. User listing and stats.
 
 ### Adding a new group (via admin)
 
@@ -71,6 +90,15 @@ Groups are now managed via the admin Mini App or API. The bot dynamically reads 
 3. Add button key(s) to `src/data/buttonKeys.ts`
 4. Register handler(s) in `src/utils/handlers.ts`
 
+### Key patterns
+
+- Some message keys (e.g., `answer_11`, `alanon`, `newbie`) are dynamically computed in `dataProvider.getMessageText()` rather than stored directly — check there before assuming a message is purely DB-driven.
+- `handlers.ts` imports `pushToStack`/`popFromStack` from `index.ts` (circular-ish dependency via re-exports). Keep stack functions in `index.ts`.
+- Group button keys follow the pattern `group_<slug>`. The regex catch-all `bot.action(/^group_/)` handles groups added after bot startup.
+
 ### Deployment
 
 Docker (Node 18 slim). Needs volume mount for `data/` to persist SQLite. Port 3000 for Express. HTTPS required for Telegram Mini App.
+
+## Recent Changes
+- 001-navigation-stack-refactor: Refactoring navigation stack from `src/index.ts` to `src/utils/navigationStack.ts`
