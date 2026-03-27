@@ -101,4 +101,9 @@ Groups are now managed via the admin Mini App or API. The bot dynamically reads 
 Docker (Node 18 slim). Needs volume mount for `data/` to persist SQLite. Port 3000 for Express. HTTPS required for Telegram Mini App.
 
 ## Recent Changes
+- 002-refactor-handlers: Added TypeScript (strict mode), Node.js 18+, компиляция в `dist/` через `tsc` + Telegraf 4.x — фреймворк бота; `better-sqlite3` — хранилище данных
 - 001-navigation-stack-refactor: Refactoring navigation stack from `src/index.ts` to `src/utils/navigationStack.ts`
+
+## Active Technologies
+- TypeScript (strict mode), Node.js 18+, компиляция в `dist/` через `tsc` + Telegraf 4.x — фреймворк бота; `better-sqlite3` — хранилище данных (002-refactor-handlers)
+- N/A (рефакторинг не изменяет схему данных) (002-refactor-handlers)

@@ -3,7 +3,7 @@ import { Telegraf } from 'telegraf';
 import { initDatabase } from './db/database';
 import { seedDatabase } from './db/seed';
 import { addAdmin } from './db/adminsRepo';
-import { registerButtonHandlers } from './utils/handlers';
+import { registerAllHandlers } from './handlers/index';
 import { sendStatisticsToAdmin } from './utils/history';
 import { createServer } from './server';
 
@@ -35,7 +35,7 @@ addAdmin(tgId);
 const bot = new Telegraf(token);
 
 // Регистрация обработчиков кнопок
-registerButtonHandlers(bot);
+registerAllHandlers(bot);
 
 // Отправляем статистику каждые 3 часа
 setInterval(() => sendStatisticsToAdmin(bot, tgId), 3 * 60 * 60 * 1000);
