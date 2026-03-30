@@ -7,6 +7,13 @@ import * as urls from './urlsController';
 import * as settings from './settingsController';
 import * as admins from './adminsController';
 import * as users from './usersController';
+import { validateBody } from './validation/validateBody';
+import { groupCreateSchema, groupUpdateSchema } from './validation/groupSchema';
+import { schedulesReplaceSchema } from './validation/schedulesSchema';
+import { messageUpdateSchema } from './validation/messageSchema';
+import { urlUpdateSchema } from './validation/urlSchema';
+import { settingUpdateSchema } from './validation/settingSchema';
+import { adminCreateSchema } from './validation/adminSchema';
 
 const router = Router();
 
@@ -22,26 +29,26 @@ router.use(authMiddleware);
 // Groups
 router.get('/groups', groups.listGroups);
 router.get('/groups/:id', groups.getGroup);
-router.post('/groups', groups.createGroup);
-router.put('/groups/:id', groups.updateGroup);
+router.post('/groups', validateBody(groupCreateSchema), groups.createGroup);
+router.put('/groups/:id', validateBody(groupUpdateSchema), groups.updateGroup);
 router.delete('/groups/:id', groups.deleteGroup);
-router.put('/groups/:id/schedules', groups.replaceSchedules);
+router.put('/groups/:id/schedules', validateBody(schedulesReplaceSchema), groups.replaceSchedules);
 
 // Messages
 router.get('/messages', messages.listMessages);
-router.put('/messages/:key', messages.updateMessage);
+router.put('/messages/:key', validateBody(messageUpdateSchema), messages.updateMessage);
 
 // URLs
 router.get('/urls', urls.listUrls);
-router.put('/urls/:key', urls.updateUrl);
+router.put('/urls/:key', validateBody(urlUpdateSchema), urls.updateUrl);
 
 // Settings
 router.get('/settings', settings.listSettings);
-router.put('/settings/:key', settings.updateSetting);
+router.put('/settings/:key', validateBody(settingUpdateSchema), settings.updateSetting);
 
 // Admins
 router.get('/admins', admins.listAdmins);
-router.post('/admins', admins.addAdmin);
+router.post('/admins', validateBody(adminCreateSchema), admins.addAdmin);
 router.delete('/admins/:telegram_id', admins.removeAdmin);
 
 // Users & Stats

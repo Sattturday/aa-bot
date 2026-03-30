@@ -7,10 +7,6 @@ export function listAdmins(req: Request, res: Response): void {
 
 export function addAdmin(req: Request, res: Response): void {
   const { telegram_id, name } = req.body;
-  if (!telegram_id) {
-    res.status(400).json({ error: 'telegram_id is required' });
-    return;
-  }
   adminsRepo.addAdmin(telegram_id, name);
   res.status(201).json({ ok: true });
 }

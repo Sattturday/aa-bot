@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import * as groupsRepo from '../db/groupsRepo';
 import { invalidateGroups } from '../db/dataProvider';
+import { slugify } from '../utils/slugify';
 
 export function listGroups(req: Request, res: Response): void {
   const type = req.query.type as 'aa' | 'alanon' | undefined;
@@ -19,30 +20,30 @@ export function getGroup(req: Request, res: Response): void {
 }
 
 export function createGroup(req: Request, res: Response): void {
-  const { key, type, name } = req.body;
-  if (!key || typeof key !== 'string') {
-    res.status(400).json({ error: 'key is required' });
-    return;
-  }
-  if (!name || typeof name !== 'string') {
-    res.status(400).json({ error: 'name is required' });
-    return;
-  }
-  if (type !== 'aa' && type !== 'alanon') {
-    res.status(400).json({ error: 'type must be "aa" or "alanon"' });
-    return;
-  }
-  if (!/^[a-z0-9_]+$/.test(key)) {
-    res.status(400).json({ error: 'key must contain only lowercase letters, digits, and underscores' });
-    return;
-  }
   try {
-    const group = groupsRepo.createGroup(req.body);
+    const data = { ...req.body };
+
+    if (!data.key) {
+      data.key = generateUniqueKey(data.name, data.type);
+    }
+
+    const group = groupsRepo.createGroup(data);
     invalidateGroups();
     res.status(201).json(group);
   } catch (error: any) {
     res.status(400).json({ error: error.message });
   }
+}
+
+function generateUniqueKey(name: string, type: string): string {
+  const base = `${type}-${slugify(name)}`;
+  let key = base;
+  let counter = 2;
+  while (groupsRepo.getGroupByKey(key)) {
+    key = `${base}-${counter}`;
+    counter++;
+  }
+  return key;
 }
 
 export function updateGroup(req: Request, res: Response): void {
