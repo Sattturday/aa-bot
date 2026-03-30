@@ -16,7 +16,6 @@ export const buttonKeys = {
     'step_11_am',
     'step_11_pm',
     'participant_literature',
-    'daily',
     // 'counter',
   ],
   relative: ['relative_about_aa', 'open_meeting', 'alanon'],
@@ -43,4 +42,11 @@ export const buttonKeys = {
     'group_sputnik',
     'group_irek',
   ],
-};
+} as const;
+
+/** Ключ экрана — объединение всех ключей buttonKeys. */
+export type ScreenKey = keyof typeof buttonKeys;
+
+/** Ключ кнопки — объединение всех значений массивов buttonKeys. */
+export type ButtonKey = typeof buttonKeys[keyof typeof buttonKeys][number];
+

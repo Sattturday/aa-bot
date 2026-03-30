@@ -1,5 +1,5 @@
 import { Context, Markup } from 'telegraf';
-import { getMessageText, getGroupScheduleButtons } from '../db/dataProvider';
+import { getMessageText, getGroupScheduleButtons, getGroupPhone } from '../db/dataProvider';
 import { isAdmin } from '../db/adminsRepo';
 import { GroupWithSchedule } from '../types';
 import { buttons } from '../data/buttons';
@@ -74,7 +74,7 @@ export const sendGroupInfo = (key: string, groups: GroupWithSchedule[]) => {
     const message = `
 👥 Группа "${group.name}"
 
-📞 ${group.phone}
+📞 ${getGroupPhone(group)}
 
 📍 ${group.address}
 👀 ${group.description ? group.description : '(нет подробностей)'}

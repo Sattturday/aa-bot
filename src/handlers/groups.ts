@@ -29,7 +29,7 @@ export function registerGroupHandlers(bot: Telegraf<Context<Update>>): void {
   bot.action(/^group_/, async ctx => {
     try {
       await ctx.answerCbQuery();
-      const key = ctx.match[0];
+      const key = ctx.match!.input;
       const userId = (ctx.from?.id || 0).toString();
       const firstName = ctx.from?.first_name || '';
       const lastName = ctx.from?.last_name || '';

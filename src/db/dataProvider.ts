@@ -88,7 +88,7 @@ export function getAllUrlValues(): Record<string, string> {
 export function getGroupScheduleButtons(): InlineKeyboardButton[][] {
   const groups = getAaGroups();
   const rows: InlineKeyboardButton[][] = groups.map(g =>
-    [Markup.button.callback(`Группа "${g.name}"`, g.key)]
+    [Markup.button.callback(g.city ? `Группа "${g.name}" (${g.city})` : `Группа "${g.name}"`, g.key)]
   );
   rows.push([Markup.button.callback('⬅️ Назад', 'back')]);
   return rows;
@@ -127,6 +127,10 @@ export function invalidateAll(): void {
 
 // --- Helper ---
 
+export function getGroupPhone(group: GroupWithSchedule): string {
+  return group.phone || getAaPhone();
+}
+
 export function generateGroupScheduleMessage(header: string, groups: GroupWithSchedule[]): string {
   const groupMessages = groups
     .map((group, index) => {
@@ -135,7 +139,7 @@ export function generateGroupScheduleMessage(header: string, groups: GroupWithSc
         .join('; ');
       return `${index + 1}️⃣ Группа "${group.name}"\n📍${group.address}\n🚩${
         group.description ? group.description : '---'
-      }\n🕖 ${scheduleText}\n📞${group.phone}\n`;
+      }\n🕖 ${scheduleText}\n📞${getGroupPhone(group)}\n`;
     })
     .join('\n');
 

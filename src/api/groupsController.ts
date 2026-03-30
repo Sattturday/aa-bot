@@ -24,7 +24,7 @@ export function createGroup(req: Request, res: Response): void {
     const data = { ...req.body };
 
     if (!data.key) {
-      data.key = generateUniqueKey(data.name, data.type);
+      data.key = generateUniqueKey(data.name);
     }
 
     const group = groupsRepo.createGroup(data);
@@ -35,8 +35,8 @@ export function createGroup(req: Request, res: Response): void {
   }
 }
 
-function generateUniqueKey(name: string, type: string): string {
-  const base = `${type}-${slugify(name)}`;
+function generateUniqueKey(name: string): string {
+  const base = `group_${slugify(name)}`;
   let key = base;
   let counter = 2;
   while (groupsRepo.getGroupByKey(key)) {
