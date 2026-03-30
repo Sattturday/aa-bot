@@ -9,12 +9,6 @@ export function listMessages(req: Request, res: Response): void {
 export function updateMessage(req: Request, res: Response): void {
   const { key } = req.params as Record<string, string>;
   const { value, description } = req.body;
-
-  if (!value) {
-    res.status(400).json({ error: 'value is required' });
-    return;
-  }
-
   messagesRepo.upsertMessage(key, value, description);
   invalidateMessages();
   res.json({ ok: true });
