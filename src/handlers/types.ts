@@ -1,5 +1,6 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
+import { ScreenKey, ButtonKey } from '../data/buttonKeys';
 
 /**
  * Результат маппинга ключа кнопки в параметры обработчика.
@@ -24,7 +25,7 @@ export interface KeyMapResult {
  */
 export interface RegisterCategoryOptions {
   bot: Telegraf<Context<Update>>;
-  category: string;
-  keys: string[];
-  keyMapper: (key: string) => KeyMapResult;
+  category: ScreenKey;
+  keys: readonly ButtonKey[];
+  keyMapper: (key: ButtonKey) => KeyMapResult;
 }

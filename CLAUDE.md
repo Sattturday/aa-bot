@@ -52,6 +52,15 @@ SQLite database at `data/bot.db`. Tables: `groups`, `schedules`, `messages`, `ur
 
 Each user has a navigation stack in `userNavigationStack` in `index.ts`. Every button press pushes the current screen; "back" pops it. Stack is capped at 10,000 users and trimmed automatically. This is the core UX pattern.
 
+### Navigation types
+
+`buttonKeys` (in `src/data/buttonKeys.ts`) is the single source of truth for all screens and buttons, typed with `as const`. Three types are derived from it:
+- **`ScreenKey`** — `keyof typeof buttonKeys` (e.g., `'start'`, `'welcome'`, `'newbie'`)
+- **`ButtonKey`** — union of all array values in `buttonKeys` (e.g., `'want_to_quit'`, `'faq'`, `'group_12_21'`)
+- **`NavKey`** — `ScreenKey | ButtonKey`
+
+Handler types (`src/handlers/types.ts`) enforce `ScreenKey` for `category` and `readonly ButtonKey[]` for `keys`. Runtime access to `buttons[key]` remains `string`-typed due to dynamic callback data.
+
 ### Data flow
 
 ```
@@ -101,10 +110,10 @@ Groups are now managed via the admin Mini App or API. The bot dynamically reads 
 Docker (Node 18 slim). Needs volume mount for `data/` to persist SQLite. Port 3000 for Express. HTTPS required for Telegram Mini App.
 
 ## Recent Changes
+- 004-typed-button-keys: Added TypeScript (strict mode), Node.js 18+ + Telegraf 4.x, Express 5.x
 - 003-zod-api-validation: Added TypeScript (strict mode), Node.js 18+ + Express 5.x, Telegraf 4.x, better-sqlite3, zod (новая)
 - 002-refactor-handlers: Added TypeScript (strict mode), Node.js 18+, компиляция в `dist/` через `tsc` + Telegraf 4.x — фреймворк бота; `better-sqlite3` — хранилище данных
-- 001-navigation-stack-refactor: Refactoring navigation stack from `src/index.ts` to `src/utils/navigationStack.ts`
 
 ## Active Technologies
-- TypeScript (strict mode), Node.js 18+ + Express 5.x, Telegraf 4.x, better-sqlite3, zod (новая) (003-zod-api-validation)
-- SQLite via better-sqlite3 (не затронуто) (003-zod-api-validation)
+- TypeScript (strict mode), Node.js 18+ + Telegraf 4.x, Express 5.x (004-typed-button-keys)
+- N/A (изменения только в типах, без изменения данных) (004-typed-button-keys)
