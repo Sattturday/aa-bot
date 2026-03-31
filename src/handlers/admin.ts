@@ -1,11 +1,13 @@
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { isAdmin } from '../db/adminsRepo';
+import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 
 export function registerAdminHandler(bot: Telegraf<Context<Update>>): void {
-  bot.action('admin_panel', async ctx => {
-    try {
+  bot.action('admin_panel', withErrorHandler({
+    label: 'action:admin_panel',
+    handler: async ctx => {
       const userId = (ctx.from?.id || 0).toString();
       if (!isAdmin(userId)) {
         await ctx.answerCbQuery('У вас нет доступа к админ-панели.');
@@ -23,8 +25,6 @@ export function registerAdminHandler(bot: Telegraf<Context<Update>>): void {
       } else {
         await ctx.reply('Админ-панель не настроена. Укажите WEBAPP_URL.');
       }
-    } catch (error) {
-      console.error('Ошибка при открытии админ-панели:', error);
-    }
-  });
+    },
+  }));
 }

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "test": "tsc -p tsconfig.test.json && find dist-tests/tests -name '*.test.js' -print0 | xargs -0 node --test",
     "start": "node dist/index.js",
     "dev": "concurrently \"tsc -w\" \"nodemon dist/index.js\"",
     "build": "tsc",

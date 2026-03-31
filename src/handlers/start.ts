@@ -3,12 +3,15 @@ import { Update } from 'telegraf/typings/core/types/typegram';
 import { buttons } from '../data/buttons';
 import { buttonKeys } from '../data/buttonKeys';
 import { getUrlValue, getMessageText } from '../db/dataProvider';
+import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 import { pushToStack } from '../utils/navigationStack';
 import { sendWelcomeMessage } from '../utils/utils';
 
 export function registerStartHandlers(bot: Telegraf<Context<Update>>): void {
-  bot.start(async ctx => {
+  bot.start(withErrorHandler({
+    label: 'command:start',
+    handler: async ctx => {
     const firstName = ctx.from?.first_name || 'друг';
     const userId = (ctx.from?.id || 0).toString();
     const lastName = ctx.from?.last_name || '';
@@ -25,11 +28,13 @@ export function registerStartHandlers(bot: Telegraf<Context<Update>>): void {
         reply_markup: keyboard,
       },
     );
-  });
+    },
+  }));
 
   buttonKeys.start.forEach(key => {
-    bot.action(key, async ctx => {
-      try {
+    bot.action(key, withErrorHandler({
+      label: `action:${key}`,
+      handler: async ctx => {
         await ctx.answerCbQuery();
         const userId = (ctx.from?.id || 0).toString();
         const firstName = ctx.from?.first_name || '';
@@ -40,9 +45,7 @@ export function registerStartHandlers(bot: Telegraf<Context<Update>>): void {
 
         await ctx.deleteMessage();
         await sendWelcomeMessage(ctx);
-      } catch (error) {
-        console.error(`Ошибка при регистрации обработчика для кнопки ${key}:`, error);
-      }
-    });
+      },
+    }));
   });
 }

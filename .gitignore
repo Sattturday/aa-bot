@@ -1,6 +1,10 @@
 .env
+.env.*
 node_modules
 dist
+dist-tests
+coverage
+*.log
 package-lock.json
 data/bot.db
 data/bot.db-wal

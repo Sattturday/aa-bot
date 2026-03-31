@@ -1,4 +1,7 @@
 node_modules
 dist
+dist-tests
+coverage
+.git
 *.log
 .env
