@@ -1,59 +1,205 @@
-# Telegram Bot for Anonymous Alcoholics Community
+# AA Bot
 
-Этот проект представляет собой Telegram-бота, созданного для содружества "Анонимные Алкоголики".
-Бот предоставляет пользователям возможность взаимодействовать с сообществом, получать информацию и задавать вопросы.
+Telegram-бот и административная панель для сообщества "Анонимные Алкоголики".
 
-## Функциональность
+Проект состоит из четырёх частей:
 
-- Приветственное сообщение с кнопками для выбора действий.
-- Возможность выбора различных опций, таких как:
-  - Информация для новичков
-  - Вопросы для участников
-  - Информация для родственников
-- Кнопка "Назад" для возврата к предыдущему сообщению.
-- Пересылка информации о пользователе (имя, username, ID) и его действиях администратору.
+- Telegram-бот на `Telegraf`
+- backend API на `Express`
+- SQLite-хранилище на `better-sqlite3`
+- Telegram Mini App для администрирования контента и справочников
+
+## Что умеет проект
+
+### Telegram-бот
+
+- показывает стартовое меню и сценарии для:
+  - новичков
+  - участников сообщества
+  - родственников
+- ведёт по веткам FAQ, информации об АА и расписанию групп
+- показывает динамический список групп из базы данных
+- поддерживает кнопку "Назад" через навигационный стек
+- логирует действия пользователей и периодически отправляет статистику администратору
+- использует единый error handler для Telegram-хендлеров
+
+### Админка
+
+Telegram Mini App позволяет:
+
+- управлять группами АА и Ал-Анон
+- редактировать тексты сообщений бота
+- редактировать ссылки и настройки
+- управлять списком администраторов
+- смотреть пользователей, их действия и статистику
+
+### Backend API
+
+API обслуживает админку и включает:
+
+- JWT-аутентификацию через Telegram WebApp `initData`
+- CRUD для групп
+- обновление расписаний групп
+- редактирование сообщений, ссылок и настроек
+- управление администраторами
+- просмотр пользователей и статистики
+- валидацию входных данных через `zod`
+
+## Технологии
+
+- Node.js 18+
+- TypeScript
+- Telegraf 4
+- Express 5
+- SQLite + `better-sqlite3`
+- React 19 + Vite
+- Telegram WebApp / Mini App
+
+## Структура проекта
+
+```text
+src/           bot, API, база данных, handlers и shared utilities
+admin/         React Mini App для администрирования
+data/          runtime SQLite файлы
+docs/          заметки и документация
+specs/         feature specs и планы
+tests/         unit и integration тесты
+```
+
+## Переменные окружения
+
+Создайте `.env` в корне проекта:
+
+```env
+BOT_TOKEN=your_telegram_bot_token
+TG_ID=your_telegram_id
+ADMIN_IDS=123456789,987654321
+JWT_SECRET=strong_secret
+WEBAPP_URL=https://your-domain.example
+PORT=3000
+```
+
+Описание:
+
+- `BOT_TOKEN` — токен бота от BotFather
+- `TG_ID` — Telegram ID основного администратора; ему бот отправляет уведомление о запуске и статистику
+- `ADMIN_IDS` — дополнительные Telegram ID администраторов через запятую
+- `JWT_SECRET` — секрет для подписи JWT токенов API
+- `WEBAPP_URL` — публичный URL Mini App, который открывается из Telegram
+- `PORT` — порт HTTP-сервера, по умолчанию `3000`
 
 ## Установка
 
-1. Клонируйте репозиторий на свой компьютер:
+```bash
+git clone https://github.com/Sattturday/aa-bot.git
+cd aa-bot
+npm install
+cd admin && npm install && cd ..
+```
 
-   ```
-   git clone https://github.com/Sattturday/aa-bot.git
-   ```
+## Разработка
 
-2. Перейдите в директорию проекта:
+### Бот и backend
 
-   ```
-   cd aa-bot
-   ```
+```bash
+npm run dev
+```
 
-3. Установите зависимости:
+Команда запускает TypeScript в watch-режиме и перезапускает `dist/index.js`.
 
-   ```
-   npm install
-   ```
+### Админка
 
-4. Создайте файл `.env` в корне проекта и добавьте следующие переменные окружения:
+```bash
+cd admin
+npm run dev
+```
 
-   ```
-   BOT_TOKEN=ваш_токен_бота
-   TG_ID=ваш_идентификатор_телеграм_администратора
-   ```
+### Production build
 
-   - `BOT_TOKEN`: токен вашего Telegram-бота, который вы можете получить у [BotFather](https://t.me/botfather).
-   - `TG_ID`: ваш Telegram ID, куда будут пересылаться сообщения.
+```bash
+npm run build
+cd admin && npm run build
+```
 
-## Использование
+### Запуск production-сборки
 
-1. Запустите бота:
+```bash
+npm run start
+```
 
-   ```
-   npm run start
-   ```
+Express-сервер:
 
-2. Откройте Telegram и найдите вашего бота по имени, указанному в BotFather.
-3. Начните взаимодействие с ботом, нажав на кнопку "Старт".
+- обслуживает API по префиксу `/api`
+- раздаёт собранную админку из `admin/dist`
+- использует SPA fallback для Mini App
 
-## Лицензия
+## Основные API endpoints
 
-Этот проект лицензирован под MIT License. Пожалуйста, смотрите файл [LICENSE](https://github.com/Sattturday/aa-bot/blob/main/LICENSE) для получения дополнительной информации.
+Публичные:
+
+- `POST /api/auth/validate`
+- `GET /api/health`
+
+Под JWT:
+
+- `GET/POST/PUT/DELETE /api/groups`
+- `PUT /api/groups/:id/schedules`
+- `GET/PUT /api/messages`
+- `GET/PUT /api/urls`
+- `GET/PUT /api/settings`
+- `GET/POST/DELETE /api/admins`
+- `GET /api/users`
+- `GET /api/users/:telegram_id/actions`
+- `GET /api/stats`
+
+## Данные
+
+SQLite база хранится в `data/bot.db`.
+
+В базе поддерживаются:
+
+- группы и их расписания
+- тексты сообщений бота
+- ссылки
+- настройки
+- администраторы
+- пользователи
+- история действий пользователей
+
+При первом запуске приложение:
+
+- инициализирует схему БД
+- сидирует базовые данные
+- добавляет администраторов из `ADMIN_IDS`
+- всегда добавляет `TG_ID` как администратора
+
+## Тесты и проверки
+
+```bash
+npm test
+npm run build
+cd admin && npm run build
+cd admin && npm run lint
+```
+
+Сейчас в проекте есть automated tests для:
+
+- Telegram handler error flow
+- auth middleware и auth controller
+- validation middleware и Zod-схем
+- router wiring
+- utility-модулей вроде `navigationStack`, `slugify`, `telegramAuth`
+
+## Docker
+
+Для сборки Docker-образа:
+
+```bash
+npm run docker_build
+```
+
+## Примечания
+
+- Mini App в production должен открываться по HTTPS
+- если `admin/dist` не собран, сервер вернёт сообщение `Admin panel not built yet`
+- пользовательские тексты в боте ориентированы на русский язык
