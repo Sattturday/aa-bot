@@ -1,6 +1,7 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { ScreenKey, ButtonKey } from '../data/buttonKeys';
+import { TelegramHandler } from '../utils/handlers/types';
 
 /**
  * Результат маппинга ключа кнопки в параметры обработчика.
@@ -29,3 +30,14 @@ export interface RegisterCategoryOptions {
   keys: readonly ButtonKey[];
   keyMapper: (key: ButtonKey) => KeyMapResult;
 }
+
+/**
+ * Базовый тип Telegram-хендлера в проекте.
+ *
+ * Args:
+ *   ctx: Контекст Telegraf.
+ *
+ * Returns:
+ *   Результат выполнения хендлера.
+ */
+export type BotHandler = TelegramHandler<Context<Update>>;

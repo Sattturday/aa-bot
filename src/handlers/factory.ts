@@ -1,4 +1,5 @@
 import { addToHistory } from '../utils/history';
+import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { pushToStack } from '../utils/navigationStack';
 import { handleButtonAction, handleButtonActionWithImage } from '../utils/utils';
 import { RegisterCategoryOptions } from './types';
@@ -26,8 +27,9 @@ export function registerCategory(options: RegisterCategoryOptions): void {
   const { bot, category, keys, keyMapper } = options;
 
   keys.forEach(key => {
-    bot.action(key, async ctx => {
-      try {
+    bot.action(key, withErrorHandler({
+      label: `action:${key}`,
+      handler: async ctx => {
         await ctx.answerCbQuery();
 
         const userId = (ctx.from?.id || 0).toString();
@@ -45,9 +47,7 @@ export function registerCategory(options: RegisterCategoryOptions): void {
         } else {
           await handleButtonAction(ctx, actionKey);
         }
-      } catch (error) {
-        console.error(`Ошибка при обработке кнопки ${key}:`, error);
-      }
-    });
+      },
+    }));
   });
 }

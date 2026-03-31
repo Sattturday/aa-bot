@@ -1,12 +1,14 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
+import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 import { popFromStack, clearUserNavigationStack } from '../utils/navigationStack';
 import { handleButtonAction, sendWelcomeMessage } from '../utils/utils';
 
 export function registerBackHandler(bot: Telegraf<Context<Update>>): void {
-  bot.action('back', async ctx => {
-    try {
+  bot.action('back', withErrorHandler({
+    label: 'action:back',
+    handler: async ctx => {
       await ctx.answerCbQuery();
       const userId = (ctx.from?.id || 0).toString();
       const firstName = ctx.from?.first_name || '';
@@ -27,8 +29,6 @@ export function registerBackHandler(bot: Telegraf<Context<Update>>): void {
         await ctx.deleteMessage();
         await sendWelcomeMessage(ctx);
       }
-    } catch (error) {
-      console.error('Ошибка при обработке кнопки "Назад":', error);
-    }
-  });
+    },
+  }));
 }
