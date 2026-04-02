@@ -1,10 +1,5 @@
 import { aaGroups, aaPhone, alAnonGroups, Groups } from './groups';
 
-// Типы для сообщений
-type Messages = {
-  [key: string]: string;
-};
-
 function buildScheduleMessage(header: string, groups: Groups): string {
   const groupMessages = groups
     .map((group, index) => {
@@ -57,7 +52,7 @@ const eveningReflection =
   'Вспомнив события прожитого дня, мы просим прощения у Бога и спрашиваем Его, как нам исправить наши ошибки.';
 
 // сообщения
-export const messages: Messages = {
+export const messages = {
   newbie: `😊 Выбери пункт, который тебя интересует\n\n📞 Горячая линия ${aaPhone}`,
   participant: '😊 Выбери пункт, который тебя интересует',
   want_to_quit:
@@ -143,4 +138,4 @@ export const messages: Messages = {
     '❓ Отвечу на частые вопросы, которые интересуют новичков и участников.\n\n' +
     '🌅 Поделюсь рекомендациями и утренними/вечерними практиками, которые помогут в выздоровлении.\n\n' +
     '📞 Помогу связаться с Горячей линией для более срочной или личной поддержки.\n\n',
-};
+} as const;

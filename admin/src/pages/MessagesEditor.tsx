@@ -21,6 +21,10 @@ const MESSAGE_LABELS: Record<string, string> = {
   step_11_pm: '11 шаг (вечер)',
 };
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
 export default function MessagesEditor() {
   const [messages, setMessages] = useState<MessageRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -38,8 +42,8 @@ export default function MessagesEditor() {
       setLoading(true);
       const data = await fetchMessages();
       setMessages(data);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка загрузки');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка загрузки'));
     } finally {
       setLoading(false);
     }
@@ -58,8 +62,8 @@ export default function MessagesEditor() {
       await updateMessage(msg.key, msg.value);
       setSuccessKey(msg.key);
       setTimeout(() => setSuccessKey(null), 2000);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка сохранения');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка сохранения'));
     } finally {
       setSavingKey(null);
     }

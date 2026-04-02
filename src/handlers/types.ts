@@ -1,6 +1,7 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { ScreenKey, ButtonKey } from '../data/buttonKeys';
+import { MessageKey } from '../i18n';
 import { TelegramHandler } from '../utils/handlers/types';
 
 /**
@@ -11,7 +12,7 @@ import { TelegramHandler } from '../utils/handlers/types';
  *   imageUrl: Если задан — используется обработчик с изображением.
  */
 export interface KeyMapResult {
-  actionKey: string;
+  actionKey: MessageKey;
   imageUrl?: string;
 }
 

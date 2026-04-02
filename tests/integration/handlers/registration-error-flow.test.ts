@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import Module from 'node:module';
 import { Context } from 'telegraf';
 import { buttonKeys } from '../../../src/data/buttonKeys';
+import { MessageKey } from '../../../src/i18n';
 import {
   DEFAULT_HANDLER_ERROR_MESSAGE,
   withErrorHandler,
@@ -146,7 +147,7 @@ test('registerCategory uses wrapper label and fallback when factory action fails
     bot: bot as never,
     category: 'welcome',
     keys: buttonKeys.start,
-    keyMapper: key => ({ actionKey: key }),
+    keyMapper: key => ({ actionKey: key as MessageKey }),
   });
 
   const ctx = createMockContext();

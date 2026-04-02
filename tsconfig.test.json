@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "./dist-tests",
     "rootDir": ".",
-    "types": ["node"]
+    "types": ["node"],
+    "noEmitOnError": true
   },
   "include": ["src/**/*", "tests/**/*"],
   "exclude": ["node_modules", "dist", "dist-tests"]

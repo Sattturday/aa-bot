@@ -6,6 +6,7 @@ import * as settingsRepo from './settingsRepo';
 import { GroupWithSchedule } from '../types';
 import { InlineKeyboardButton } from 'telegraf/typings/core/types/typegram';
 import { Markup } from 'telegraf';
+import { messageCatalog } from '../i18n/messages';
 
 // --- Caches ---
 
@@ -57,23 +58,28 @@ export function getMessageText(key: string): string {
   // Dynamic computed messages
   if (key === 'answer_11') {
     return generateGroupScheduleMessage(
-      `🙏 Остаться трезвым непросто, но Вы не одни. Группы АА поддержат Вас на пути к выздоровлению.\n\n📞 Горячая линия ${getAaPhone()}\n\n`,
+      `${messageCatalog.answer_11_dynamic_header}${getAaPhone()}\n\n`,
       getAaGroups(),
     );
   }
   if (key === 'alanon') {
     const staticPart = messagesCache.get()['alanon'] || '';
     const schedule = generateGroupScheduleMessage(
-      '🙏 Группы для родственников алкоголиков. Приходите, мы вам рады.\n\n',
+      messageCatalog.alanon_dynamic_schedule_header,
       getAlAnonGroups(),
     );
     return staticPart + schedule;
   }
   if (key === 'newbie') {
-    return `😊 Выбери пункт, который тебя интересует\n\n📞 Горячая линия ${getAaPhone()}`;
+    return `${messageCatalog.newbie_dynamic_with_phone}${getAaPhone()}`;
   }
 
-  return messagesCache.get()[key] || '';
+  const value = messagesCache.get()[key];
+  return value && value.trim() !== '' ? value : '';
+}
+
+export function getAllMessageValues(): Record<string, string> {
+  return messagesCache.get();
 }
 
 export function getUrlValue(key: string): string {
@@ -88,9 +94,14 @@ export function getAllUrlValues(): Record<string, string> {
 export function getGroupScheduleButtons(): InlineKeyboardButton[][] {
   const groups = getAaGroups();
   const rows: InlineKeyboardButton[][] = groups.map(g =>
-    [Markup.button.callback(g.city ? `Группа "${g.name}" (${g.city})` : `Группа "${g.name}"`, g.key)]
+    [Markup.button.callback(
+      g.city
+        ? `${messageCatalog.group_schedule_button_prefix}${g.name}" (${g.city})`
+        : `${messageCatalog.group_schedule_button_prefix}${g.name}"`,
+      g.key,
+    )]
   );
-  rows.push([Markup.button.callback('⬅️ Назад', 'back')]);
+  rows.push([Markup.button.callback(messageCatalog.group_schedule_dynamic_back, 'back')]);
   return rows;
 }
 
@@ -135,11 +146,11 @@ export function generateGroupScheduleMessage(header: string, groups: GroupWithSc
   const groupMessages = groups
     .map((group, index) => {
       const scheduleText = group.schedule
-        .map(s => `${s.days.join(', ')} в ${s.time}`)
+        .map(s => `${s.days.join(', ')}${messageCatalog.group_schedule_time_separator}${s.time}`)
         .join('; ');
-      return `${index + 1}️⃣ Группа "${group.name}"\n📍${group.address}\n🚩${
-        group.description ? group.description : '---'
-      }\n🕖 ${scheduleText}\n📞${getGroupPhone(group)}\n`;
+      return `${index + 1}️⃣ ${messageCatalog.group_schedule_item_prefix}${group.name}"\n📍${group.address}\n🚩${
+        group.description ? group.description : messageCatalog.group_schedule_description_fallback
+      }\n${messageCatalog.group_schedule_time_prefix}${scheduleText}\n${messageCatalog.group_schedule_phone_prefix}${getGroupPhone(group)}\n`;
     })
     .join('\n');
 

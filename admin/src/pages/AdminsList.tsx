@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { fetchAdmins, addAdmin, removeAdmin } from '../api/client';
 import type { AdminRow } from '../api/client';
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
 export default function AdminsList() {
   const [admins, setAdmins] = useState<AdminRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,8 +26,8 @@ export default function AdminsList() {
       setLoading(true);
       const data = await fetchAdmins();
       setAdmins(data);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка загрузки');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка загрузки'));
     } finally {
       setLoading(false);
     }
@@ -39,8 +43,8 @@ export default function AdminsList() {
       setFormTgId('');
       setFormName('');
       setShowForm(false);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка добавления');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка добавления'));
     } finally {
       setSaving(false);
     }
@@ -56,8 +60,8 @@ export default function AdminsList() {
     try {
       await removeAdmin(telegramId);
       setAdmins((prev) => prev.filter((a) => a.telegram_id !== telegramId));
-    } catch (e: any) {
-      setError(e.message || 'Ошибка удаления');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка удаления'));
     }
   }
 

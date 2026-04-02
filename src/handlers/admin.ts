@@ -1,6 +1,7 @@
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { isAdmin } from '../db/adminsRepo';
+import { t } from '../i18n';
 import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 
@@ -10,7 +11,7 @@ export function registerAdminHandler(bot: Telegraf<Context<Update>>): void {
     handler: async ctx => {
       const userId = (ctx.from?.id || 0).toString();
       if (!isAdmin(userId)) {
-        await ctx.answerCbQuery('У вас нет доступа к админ-панели.');
+        await ctx.answerCbQuery(t('admin_access_denied'));
         return;
       }
       const firstName = ctx.from?.first_name || '';
@@ -19,11 +20,11 @@ export function registerAdminHandler(bot: Telegraf<Context<Update>>): void {
       addToHistory(userId, 'admin_panel', firstName, lastName, username);
       const webAppUrl = process.env.WEBAPP_URL;
       if (webAppUrl) {
-        await ctx.reply('Откройте админ-панель:', Markup.inlineKeyboard([
-          [Markup.button.webApp('🔧 Админ-панель', webAppUrl)],
+        await ctx.reply(t('admin_open_panel'), Markup.inlineKeyboard([
+          [Markup.button.webApp(t('admin_panel_button'), webAppUrl)],
         ]));
       } else {
-        await ctx.reply('Админ-панель не настроена. Укажите WEBAPP_URL.');
+        await ctx.reply(t('admin_not_configured'));
       }
     },
   }));

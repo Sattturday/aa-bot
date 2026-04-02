@@ -1,6 +1,6 @@
 export const buttonKeys = {
   start: ['welcome'],
-  welcome: ['newbie', 'participant', 'relative', 'ask_question'],
+  welcome: ['newbie', 'participant', 'relative'],
   newbie: [
     'want_to_quit',
     'newbie_about_aa',
@@ -49,4 +49,3 @@ export type ScreenKey = keyof typeof buttonKeys;
 
 /** Ключ кнопки — объединение всех значений массивов buttonKeys. */
 export type ButtonKey = typeof buttonKeys[keyof typeof buttonKeys][number];
-

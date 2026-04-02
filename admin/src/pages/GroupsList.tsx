@@ -7,14 +7,18 @@ const TABS = [
   { label: 'Все', value: 'all' },
   { label: 'АА', value: 'aa' },
   { label: 'Ал-Анон', value: 'alanon' },
-];
+] as const;
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
 
 export default function GroupsList() {
   const navigate = useNavigate();
   const [groups, setGroups] = useState<GroupWithSchedules[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [tab, setTab] = useState('all');
+  const [tab, setTab] = useState<'all' | 'aa' | 'alanon'>('all');
   const [confirmId, setConfirmId] = useState<number | null>(null);
 
   useEffect(() => {
@@ -26,8 +30,8 @@ export default function GroupsList() {
       setLoading(true);
       const data = await fetchGroups();
       setGroups(data);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка загрузки');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка загрузки'));
     } finally {
       setLoading(false);
     }
@@ -43,8 +47,8 @@ export default function GroupsList() {
     try {
       await deleteGroup(id);
       setGroups((prev) => prev.filter((g) => g.id !== id));
-    } catch (e: any) {
-      setError(e.message || 'Ошибка удаления');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка удаления'));
     }
   }
 
