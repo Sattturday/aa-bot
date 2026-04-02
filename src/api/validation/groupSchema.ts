@@ -1,13 +1,14 @@
 import { z } from 'zod';
+import { messageCatalog } from '../../i18n/messages';
 
 /** Схема для создания группы (POST /groups). Расписание устанавливается отдельным эндпоинтом. */
 export const groupCreateSchema = z.object({
-  key: z.string().regex(/^[a-z0-9_-]+$/, 'key: строчные буквы, цифры, _ и -').optional(),
+  key: z.string().regex(/^[a-z0-9_-]+$/, messageCatalog.validation_group_key_format).optional(),
   type: z.enum(['aa', 'alanon']),
-  name: z.string().min(1, 'name не может быть пустым'),
-  address: z.string().min(1, 'address не может быть пустым'),
-  city: z.string().min(1, 'city не может быть пустым'),
-  phone: z.string().regex(/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, 'телефон в формате +7 (XXX) XXX-XX-XX').optional(),
+  name: z.string().min(1, messageCatalog.validation_group_name_required),
+  address: z.string().min(1, messageCatalog.validation_group_address_required),
+  city: z.string().min(1, messageCatalog.validation_group_city_required),
+  phone: z.string().regex(/^\+7 \(\d{3}\) \d{3}-\d{2}-\d{2}$/, messageCatalog.validation_group_phone_format).optional(),
   description: z.string().optional(),
   notes: z.string().optional(),
   image_url: z.string().url().optional(),

@@ -1,9 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { fetchUsers, fetchUserActions, fetchStats } from '../api/client';
 import type { UserRow, UserAction, Stats } from '../api/client';
 
 const PAGE_SIZE = 20;
+
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
 
 export default function UsersPage() {
   const [users, setUsers] = useState<UserRow[]>([]);
@@ -16,11 +20,7 @@ export default function UsersPage() {
   const [actions, setActions] = useState<UserAction[]>([]);
   const [actionsLoading, setActionsLoading] = useState(false);
 
-  useEffect(() => {
-    loadData();
-  }, [offset]);
-
-  async function loadData() {
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       const [usersRes, statsData] = await Promise.all([
@@ -30,12 +30,16 @@ export default function UsersPage() {
       setUsers(usersRes.users);
       setTotal(usersRes.total);
       if (statsData) setStats(statsData);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка загрузки');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка загрузки'));
     } finally {
       setLoading(false);
     }
-  }
+  }, [offset]);
+
+  useEffect(() => {
+    void loadData();
+  }, [loadData]);
 
   async function toggleUser(user: UserRow) {
     if (expandedUserId === user.telegram_id) {

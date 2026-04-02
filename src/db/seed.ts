@@ -2,17 +2,18 @@ import db, { initDatabase } from './database';
 import { aaGroups, alAnonGroups, aaPhone } from '../data/groups';
 import { messages } from '../data/messages';
 import { urls } from '../data/urls';
+import { messageCatalog } from '../i18n/messages';
 
 export function seedDatabase(): void {
   const groupCount = (db.prepare('SELECT COUNT(*) as c FROM groups').get() as { c: number }).c;
 
   // Only seed if database is empty
   if (groupCount > 0) {
-    console.log('База данных уже содержит данные, пропускаем seed.');
+    console.log(messageCatalog.seed_db_already_seeded);
     return;
   }
 
-  console.log('Заполняем базу данных начальными данными...');
+  console.log(messageCatalog.seed_db_seeding_started);
 
   const insertGroup = db.prepare(`
     INSERT OR IGNORE INTO groups (key, type, name, address, description, map_link, video_path, image_url, phone, notes, city, sort_order)
@@ -105,14 +106,14 @@ export function seedDatabase(): void {
   db.prepare(`
     INSERT OR IGNORE INTO settings (key, value, description)
     VALUES (?, ?, ?)
-  `).run('aaPhone', aaPhone, 'Горячая линия АА');
+  `).run('aaPhone', aaPhone, messageCatalog.seed_aa_phone_description);
 
-  console.log('Seed завершён.');
+  console.log(messageCatalog.seed_completed);
 }
 
 // Allow running as standalone script
 if (require.main === module) {
   initDatabase();
   seedDatabase();
-  console.log('Done.');
+  console.log(messageCatalog.seed_done);
 }

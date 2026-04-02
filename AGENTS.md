@@ -46,6 +46,8 @@ Do not commit `.env`, database files, or Telegram credentials. Root setup expect
 ## Active Technologies
 - TypeScript (strict mode), Node.js 18+ + Telegraf 4.x, Express 5.x, better-sqlite3 (005-centralized-handler-errors)
 - SQLite (`data/bot.db`) для данных бота; сама фича состояние не меняет (005-centralized-handler-errors)
+- TypeScript (strict mode), Node.js 18+ + Telegraf 4.x, Express 5.x, better-sqlite3, Zod 4.x (без новых зависимостей) (008-centralize-i18n-texts)
+- SQLite (`data/bot.db`) через `src/db/messagesRepo.ts`/`src/db/dataProvider.ts`; локальный i18n-каталог в коде как fallback (008-centralize-i18n-texts)
 
 ## Recent Changes
 - 005-centralized-handler-errors: Added TypeScript (strict mode), Node.js 18+ + Telegraf 4.x, Express 5.x, better-sqlite3

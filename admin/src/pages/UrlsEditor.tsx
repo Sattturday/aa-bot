@@ -3,6 +3,10 @@ import { Link } from 'react-router-dom';
 import { fetchUrls, updateUrl } from '../api/client';
 import type { UrlRow } from '../api/client';
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
 export default function UrlsEditor() {
   const [urls, setUrls] = useState<UrlRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -19,8 +23,8 @@ export default function UrlsEditor() {
       setLoading(true);
       const data = await fetchUrls();
       setUrls(data);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка загрузки');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка загрузки'));
     } finally {
       setLoading(false);
     }
@@ -37,8 +41,8 @@ export default function UrlsEditor() {
       await updateUrl(entry.key, entry.value);
       setSuccessKey(entry.key);
       setTimeout(() => setSuccessKey(null), 2000);
-    } catch (e: any) {
-      setError(e.message || 'Ошибка сохранения');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка сохранения'));
     } finally {
       setSavingKey(null);
     }

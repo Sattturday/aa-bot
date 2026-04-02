@@ -1,6 +1,7 @@
 import { Context, Markup, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { getUrlValue } from '../db/dataProvider';
+import { t } from '../i18n';
 import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 import { sendWelcomeMessage } from '../utils/utils';
@@ -10,7 +11,7 @@ export function registerFallbackHandlers(bot: Telegraf<Context<Update>>): void {
   bot.action('no_action', withErrorHandler({
     label: 'action:no_action',
     handler: async ctx => {
-      await ctx.answerCbQuery('Пока недоступно');
+      await ctx.answerCbQuery(t('fallback_no_action'));
     },
   }));
 
@@ -38,17 +39,10 @@ export function registerFallbackHandlers(bot: Telegraf<Context<Update>>): void {
       const username = ctx.from?.username || '';
       addToHistory(userId, 'unknown_message', firstName, lastName, username);
 
-      await ctx.reply(
-        `🤔 Я пока не могу обработать это сообщение.
-
-Но я могу помочь вам вернуться в главное меню или связаться с участником АА (алкоголиком, который не пьет).
-
-Выберите, пожалуйста, подходящий вариант:`,
-        Markup.inlineKeyboard([
-          [Markup.button.callback('🏠 Главное меню', 'back')],
-          [Markup.button.url('💬 Связаться с участником АА', getUrlValue('question'))],
-        ]),
-      );
+      await ctx.reply(t('fallback_unknown_message'), Markup.inlineKeyboard([
+        [Markup.button.callback(t('fallback_main_menu_button'), 'back')],
+        [Markup.button.url(t('fallback_contact_button'), getUrlValue('question'))],
+      ]));
     },
   }));
 }

@@ -4,6 +4,7 @@ import * as path from 'path';
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import * as usersRepo from '../db/usersRepo';
+import { messageCatalog } from '../i18n/messages';
 
 // Track user action — saves to DB
 export const addToHistory = (
@@ -16,7 +17,7 @@ export const addToHistory = (
   try {
     usersRepo.trackUser(userId, firstName, lastName, username, action);
   } catch (error) {
-    console.error('Ошибка при записи в историю:', error);
+    console.error(messageCatalog.history_write_error, error);
   }
   console.log(`[history] ${userId}: ${action}`);
 };
@@ -31,13 +32,15 @@ const writeHistoryToFile = async (bot: Telegraf<Context<Update>>) => {
     return null;
   }
 
-  let fileContent = '📊 Статистика взаимодействия:\n\n';
+  let fileContent = messageCatalog.history_file_title;
 
   for (const { user, actions } of recentData) {
-    fileContent += `👤 Пользователь: ${user.first_name || 'Не указано'}\n`;
-    fileContent += `Username: ${user.username ? '@' + user.username : 'Не указано'}\n`;
-    fileContent += `ID: ${user.telegram_id}\n`;
-    fileContent += `История взаимодействия:\n`;
+    const firstName = user.first_name || messageCatalog.history_not_specified;
+    const username = user.username ? `@${user.username}` : messageCatalog.history_not_specified;
+    fileContent += `${messageCatalog.history_user_label}${firstName}\n`;
+    fileContent += `${messageCatalog.history_username_label}${username}\n`;
+    fileContent += `${messageCatalog.history_id_label}${user.telegram_id}\n`;
+    fileContent += `${messageCatalog.history_interaction_history_label}\n`;
 
     actions.forEach(({ created_at, action }) => {
       fileContent += `🕒 ${created_at} - ${action}\n`;
@@ -59,8 +62,8 @@ export const sendStatisticsToAdmin = async (
     const totalActions = stats.actions.reduce((sum, a) => sum + a.count, 0);
 
     if (totalActions === 0) {
-      await bot.telegram.sendMessage(tgId, '📊 За последние 3 часа — никто не приходил.');
-      console.log('История пуста за последние 3 часа.');
+      await bot.telegram.sendMessage(tgId, messageCatalog.history_no_visitors_3h);
+      console.log(messageCatalog.history_empty_3h_log);
       return;
     }
 
@@ -70,14 +73,17 @@ export const sendStatisticsToAdmin = async (
       .join('\n');
 
     const message =
-      `📊 Статистика за 3 часа:\n\n` +
-      `👥 Пользователей: ${stats.active_users}\n` +
-      `🔘 Действий: ${totalActions}\n\n` +
-      `Топ действий:\n${topActions}`;
+      `${messageCatalog.history_stats_header_3h}` +
+      `${messageCatalog.history_stats_users_label}${stats.active_users}\n` +
+      `${messageCatalog.history_stats_actions_label}${totalActions}\n\n` +
+      `${messageCatalog.history_stats_top_actions_label}\n${topActions}`;
 
     await bot.telegram.sendMessage(tgId, message);
-    console.log(`Статистика отправлена: ${stats.active_users} пользователей, ${totalActions} действий.`);
+    const sentLogMessage = messageCatalog.history_stats_sent_log_template
+      .replace('{users}', String(stats.active_users))
+      .replace('{actions}', String(totalActions));
+    console.log(sentLogMessage);
   } catch (error) {
-    console.error('Ошибка при отправке статистики администратору:', error);
+    console.error(messageCatalog.history_send_error, error);
   }
 };

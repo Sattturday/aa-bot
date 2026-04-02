@@ -1,6 +1,7 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { buttonKeys } from '../data/buttonKeys';
+import { mapButtonKeyToMessageKey } from '../i18n';
 import { registerCategory } from './factory';
 
 export function registerWelcomeHandlers(bot: Telegraf<Context<Update>>): void {
@@ -8,6 +9,12 @@ export function registerWelcomeHandlers(bot: Telegraf<Context<Update>>): void {
     bot,
     category: 'welcome',
     keys: buttonKeys.welcome,
-    keyMapper: key => ({ actionKey: key }),
+    keyMapper: key => {
+      const actionKey = mapButtonKeyToMessageKey(key);
+      if (!actionKey) {
+        throw new Error(`Missing message mapping for button key: ${key}`);
+      }
+      return { actionKey };
+    },
   });
 }

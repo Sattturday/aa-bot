@@ -2,7 +2,8 @@ import { Context, Markup, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
 import { buttons } from '../data/buttons';
 import { buttonKeys } from '../data/buttonKeys';
-import { getUrlValue, getMessageText } from '../db/dataProvider';
+import { getUrlValue } from '../db/dataProvider';
+import { t } from '../i18n';
 import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 import { pushToStack } from '../utils/navigationStack';
@@ -12,11 +13,11 @@ export function registerStartHandlers(bot: Telegraf<Context<Update>>): void {
   bot.start(withErrorHandler({
     label: 'command:start',
     handler: async ctx => {
-    const firstName = ctx.from?.first_name || 'друг';
+    const firstName = ctx.from?.first_name || t('start_default_name');
     const userId = (ctx.from?.id || 0).toString();
     const lastName = ctx.from?.last_name || '';
     const username = ctx.from?.username || '';
-    const message = `👋 Привет, ${firstName}!`;
+    const message = `${t('start_greeting_prefix')}${firstName}${t('start_greeting_suffix')}`;
     const keyboard = Markup.inlineKeyboard(buttons.start).reply_markup;
 
     addToHistory(userId, '/start', firstName, lastName, username);
@@ -24,7 +25,7 @@ export function registerStartHandlers(bot: Telegraf<Context<Update>>): void {
     await ctx.replyWithPhoto(
       { url: getUrlValue('welcome') },
       {
-        caption: message + getMessageText('start'),
+        caption: message + t('start'),
         reply_markup: keyboard,
       },
     );

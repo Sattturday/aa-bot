@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { fetchGroup, createGroup, updateGroup, replaceSchedules } from '../api/client';
+import type { GroupWithSchedules } from '../api/client';
 
 const DAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
@@ -8,6 +9,18 @@ interface ScheduleRow {
   days: string[];
   time: string;
 }
+
+type ApiScheduleRow = {
+  days: string[] | string;
+  time?: string;
+};
+
+type GroupApiResponse = GroupWithSchedules & {
+  schedule?: ApiScheduleRow[];
+  mapLink?: string;
+  videoPath?: string;
+  imageUrl?: string;
+};
 
 interface GroupForm {
   name: string;
@@ -39,6 +52,10 @@ const emptyForm: GroupForm = {
   sort_order: 0,
 };
 
+function getErrorMessage(error: unknown, fallback: string): string {
+  return error instanceof Error ? error.message : fallback;
+}
+
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div style={{ marginBottom: 14 }}>
@@ -63,12 +80,12 @@ export default function GroupEditor() {
     if (isEdit && id) {
       loadGroup(Number(id));
     }
-  }, [id]);
+  }, [id, isEdit]);
 
   async function loadGroup(groupId: number) {
     try {
       setLoading(true);
-      const data = await fetchGroup(groupId) as any;
+      const data = await fetchGroup(groupId) as GroupApiResponse;
       setForm({
         name: data.name || '',
         key: data.key || '',
@@ -86,7 +103,7 @@ export default function GroupEditor() {
       const sched = data.schedule || data.schedules || [];
       if (sched.length > 0) {
         setSchedules(
-          sched.map((s: any) => {
+          sched.map((s: ApiScheduleRow) => {
             let days: string[] = [];
             if (typeof s.days === 'string') {
               try { days = JSON.parse(s.days); } catch { days = s.days.split(',').filter(Boolean); }
@@ -97,8 +114,8 @@ export default function GroupEditor() {
           })
         );
       }
-    } catch (e: any) {
-      setError(e.message || 'Ошибка загрузки');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка загрузки'));
     } finally {
       setLoading(false);
     }
@@ -158,8 +175,8 @@ export default function GroupEditor() {
 
       await replaceSchedules(groupId, scheduleData);
       navigate('/groups');
-    } catch (e: any) {
-      setError(e.message || 'Ошибка сохранения');
+    } catch (error: unknown) {
+      setError(getErrorMessage(error, 'Ошибка сохранения'));
     } finally {
       setSaving(false);
     }

@@ -1,11 +1,12 @@
 import { Context } from 'telegraf';
+import { messageCatalog } from '../../i18n/messages';
 import {
   LoggedHandlerError,
   WithErrorHandlerOptions,
 } from './types';
 
 export const DEFAULT_HANDLER_ERROR_MESSAGE =
-  'Произошла ошибка. Попробуйте ещё раз или нажмите /start';
+  messageCatalog.handler_error_default;
 
 function getUserId(ctx: Context): string | null {
   if (!ctx.from?.id) {

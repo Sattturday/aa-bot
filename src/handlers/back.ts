@@ -1,5 +1,6 @@
 import { Context, Telegraf } from 'telegraf';
 import { Update } from 'telegraf/typings/core/types/typegram';
+import { isMessageKey } from '../i18n';
 import { withErrorHandler } from '../utils/handlers/withErrorHandler';
 import { addToHistory } from '../utils/history';
 import { popFromStack, clearUserNavigationStack } from '../utils/navigationStack';
@@ -22,8 +23,12 @@ export function registerBackHandler(bot: Telegraf<Context<Update>>): void {
           await ctx.deleteMessage();
           clearUserNavigationStack(userId);
           await sendWelcomeMessage(ctx);
-        } else {
+        } else if (isMessageKey(previousState)) {
           await handleButtonAction(ctx, previousState);
+        } else {
+          await ctx.deleteMessage();
+          clearUserNavigationStack(userId);
+          await sendWelcomeMessage(ctx);
         }
       } else {
         await ctx.deleteMessage();
