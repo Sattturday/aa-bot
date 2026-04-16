@@ -11,9 +11,3 @@ services:
     ports:
       - "3000:3000"
     restart: always
-networks:
-  default:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.50.0.0/16
