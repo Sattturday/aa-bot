@@ -1,103 +1,94 @@
-# Implementation Plan: [FEATURE]
+# План реализации: [FEATURE]
 
-**Branch**: `[###-feature-name]` | **Date**: [DATE] | **Spec**: [link]
-**Input**: Feature specification from `/specs/[###-feature-name]/spec.md`
+**Ветка**: `[###-feature-name]` | **Дата**: [DATE] | **Спецификация**: [link]
+**Входные данные**: спецификация из `/specs/[###-feature-name]/spec.md`
 
-**Note**: This template is filled in by the `/speckit.plan` command. See `.specify/templates/plan-template.md` for the execution workflow.
+**Примечание**: этот шаблон заполняется командой `/speckit.plan`.
+Итоговый документ ОБЯЗАН быть на русском языке.
 
-## Summary
+## Краткое описание
 
-[Extract from feature spec: primary requirement + technical approach from research]
+[Кратко опишите требование и технический подход.]
 
-## Technical Context
+## Технический контекст
 
 <!--
-  ACTION REQUIRED: Replace the content in this section with the technical details
-  for the project. The structure here is presented in advisory capacity to guide
-  the iteration process.
+  ОБЯЗАТЕЛЬНО: замените подсказки ниже конкретными техническими
+  деталями проекта. Не оставляйте англоязычные заполнители в готовом плане.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [e.g., library/cli/web-service/mobile-app/compiler/desktop-app or NEEDS CLARIFICATION]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Язык/версия**: TypeScript strict mode, Node.js 18+
+**Основные зависимости**: Telegraf 4.x, Express 5.x, better-sqlite3, Zod 4.x, React + Vite для `admin/`
+**Хранилище**: SQLite `data/bot.db` через слой репозиториев; `src/data/` только для seed/fallback
+**Тестирование**: `npm test`; дополнительно `npm run build`, `cd admin && npm run build`, `cd admin && npm run lint` при затронутой области
+**Целевая платформа**: один Node.js-процесс в Docker-контейнере; Telegram Bot + Mini App
+**Тип проекта**: Telegram bot + Express API + React Mini App
+**Цели производительности**: без новых целей, если фича их явно не задаёт
+**Ограничения**: русскоязычный UX, SQLite без ORM, cache invalidation через `src/db/dataProvider.ts`, один контейнер
+**Масштаб/объём**: малый региональный бот; не добавлять инфраструктуру сверх потребности фичи
 
-## Constitution Check
+## Проверка конституции
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+*GATE: ОБЯЗАТЕЛЬНО пройти до Phase 0 research и повторить после Phase 1 design.*
 
-[Gates determined based on constitution file]
+- Русский UX: все пользовательские тексты бота, кнопки и ошибки остаются на русском.
+- Источник данных: пользовательский контент читается из SQLite через репозитории; хардкод в обработчиках запрещён.
+- Кеш: все API-записи, меняющие данные бота, вызывают подходящий `invalidate*()` до успешного ответа.
+- Навигация: кнопка «Назад» работает только через централизованный навигационный стек.
+- Минимальная сложность: новая зависимость, абстракция или инфраструктура имеет конкретное обоснование.
+- Документация: spec/plan/tasks и новые комментарии написаны на русском в принятом стиле.
+- Ветка: новая фича ведётся в отдельной feature-ветке.
+- Async: новый асинхронный код использует `async/await`, без callback/`.then()`-цепочек.
+- Тесты: бизнес-логика, утилиты, API и критические сценарии получают тесты; применимые проверки указаны.
+- Линтинг: `cd admin && npm run lint` обязателен для изменений в `admin/`; root lint обязателен после настройки скрипта.
+- Именованные аргументы: функции с более чем двумя параметрами принимают объект параметров.
+- Структура: Telegram handlers не содержат бизнес-логику и делегируют её сервисам/утилитам.
 
-## Project Structure
+## Структура проекта
 
-### Documentation (this feature)
+### Документация текущей фичи
 
 ```text
 specs/[###-feature]/
-├── plan.md              # This file (/speckit.plan command output)
-├── research.md          # Phase 0 output (/speckit.plan command)
-├── data-model.md        # Phase 1 output (/speckit.plan command)
-├── contracts/           # Phase 1 output (/speckit.plan command)
-└── tasks.md             # Phase 2 output (/speckit.tasks command - NOT created by /speckit.plan)
+├── plan.md              # этот файл
+├── research.md          # результат Phase 0
+├── data-model.md        # результат Phase 1, если нужны данные
+├── contracts/           # API-контракты, если меняется API
+└── tasks.md             # создаётся командой /speckit.tasks
 ```
 
-### Source Code (repository root)
+### Исходный код
+
 <!--
-  ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
+  ОБЯЗАТЕЛЬНО: оставьте только реальные директории, которые затрагивает фича.
+  Не копируйте неиспользуемые варианты в итоговый план.
 -->
 
 ```text
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── api/                 # Express controllers/router/schemas
+├── db/                  # SQLite setup, repos, dataProvider cache
+├── handlers/ или utils/ # Telegram-обработчики и общие утилиты
+└── types/
 
 tests/
-├── contract/
 ├── integration/
 └── unit/
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
+admin/
 ├── src/
 │   ├── components/
 │   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+│   └── api/
+└── tests/               # если добавлены frontend-тесты
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Решение по структуре**: [Опишите выбранные реальные пути и почему они подходят фиче.]
 
-## Complexity Tracking
+## Учёт сложности
 
-> **Fill ONLY if Constitution Check has violations that must be justified**
+> **Заполнять только при нарушениях проверки конституции, которые требуют обоснования.**
 
-| Violation | Why Needed | Simpler Alternative Rejected Because |
-|-----------|------------|-------------------------------------|
-| [e.g., 4th project] | [current need] | [why 3 projects insufficient] |
-| [e.g., Repository pattern] | [specific problem] | [why direct DB access insufficient] |
+| Нарушение | Почему необходимо | Почему простой вариант не подходит |
+|-----------|-------------------|------------------------------------|
+| [пример] | [текущая причина] | [почему нельзя проще] |

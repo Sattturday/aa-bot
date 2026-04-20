@@ -1,128 +1,123 @@
-# Feature Specification: [FEATURE NAME]
+# Спецификация фичи: [FEATURE NAME]
 
-**Feature Branch**: `[###-feature-name]`  
-**Created**: [DATE]  
-**Status**: Draft  
-**Input**: User description: "$ARGUMENTS"
+**Ветка фичи**: `[###-feature-name]`
+**Создано**: [DATE]
+**Статус**: Draft
+**Входные данные**: описание пользователя: "$ARGUMENTS"
 
-## User Scenarios & Testing *(mandatory)*
+> Итоговая спецификация ОБЯЗАНА быть на русском языке и описывать поведение,
+> а не детали реализации. Пользовательские тексты бота, кнопки и ошибки
+> фиксируйте на русском.
+
+## Пользовательские сценарии и тестирование *(обязательно)*
 
 <!--
-  IMPORTANT: User stories should be PRIORITIZED as user journeys ordered by importance.
-  Each user story/journey must be INDEPENDENTLY TESTABLE - meaning if you implement just ONE of them,
-  you should still have a viable MVP (Minimum Viable Product) that delivers value.
-  
-  Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
-  Think of each story as a standalone slice of functionality that can be:
-  - Developed independently
-  - Tested independently
-  - Deployed independently
-  - Demonstrated to users independently
+  ВАЖНО: пользовательские сценарии должны быть упорядочены по приоритету.
+  Каждый сценарий должен быть независимо тестируемым и давать ценность как
+  отдельный MVP-срез.
 -->
 
-### User Story 1 - [Brief Title] (Priority: P1)
+### Пользовательский сценарий 1 - [Краткое название] (Priority: P1)
 
-[Describe this user journey in plain language]
+[Опишите пользовательский путь простым языком.]
 
-**Why this priority**: [Explain the value and why it has this priority level]
+**Почему этот приоритет**: [Объясните ценность и причину приоритета.]
 
-**Independent Test**: [Describe how this can be tested independently - e.g., "Can be fully tested by [specific action] and delivers [specific value]"]
+**Независимая проверка**: [Как проверить сценарий отдельно от остальных.]
 
-**Acceptance Scenarios**:
+**Сценарии приёмки**:
 
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-2. **Given** [initial state], **When** [action], **Then** [expected outcome]
+1. **Дано** [начальное состояние], **Когда** [действие], **Тогда** [ожидаемый результат]
+2. **Дано** [начальное состояние], **Когда** [действие], **Тогда** [ожидаемый результат]
 
 ---
 
-### User Story 2 - [Brief Title] (Priority: P2)
+### Пользовательский сценарий 2 - [Краткое название] (Priority: P2)
 
-[Describe this user journey in plain language]
+[Опишите пользовательский путь простым языком.]
 
-**Why this priority**: [Explain the value and why it has this priority level]
+**Почему этот приоритет**: [Объясните ценность и причину приоритета.]
 
-**Independent Test**: [Describe how this can be tested independently]
+**Независимая проверка**: [Как проверить сценарий отдельно от остальных.]
 
-**Acceptance Scenarios**:
+**Сценарии приёмки**:
 
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
-
----
-
-### User Story 3 - [Brief Title] (Priority: P3)
-
-[Describe this user journey in plain language]
-
-**Why this priority**: [Explain the value and why it has this priority level]
-
-**Independent Test**: [Describe how this can be tested independently]
-
-**Acceptance Scenarios**:
-
-1. **Given** [initial state], **When** [action], **Then** [expected outcome]
+1. **Дано** [начальное состояние], **Когда** [действие], **Тогда** [ожидаемый результат]
 
 ---
 
-[Add more user stories as needed, each with an assigned priority]
+### Пользовательский сценарий 3 - [Краткое название] (Priority: P3)
 
-### Edge Cases
+[Опишите пользовательский путь простым языком.]
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right edge cases.
--->
+**Почему этот приоритет**: [Объясните ценность и причину приоритета.]
 
-- What happens when [boundary condition]?
-- How does system handle [error scenario]?
+**Независимая проверка**: [Как проверить сценарий отдельно от остальных.]
 
-## Requirements *(mandatory)*
+**Сценарии приёмки**:
 
-<!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right functional requirements.
--->
+1. **Дано** [начальное состояние], **Когда** [действие], **Тогда** [ожидаемый результат]
 
-### Functional Requirements
+---
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+[Добавьте больше сценариев при необходимости, каждый с приоритетом.]
 
-*Example of marking unclear requirements:*
-
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
-
-### Key Entities *(include if feature involves data)*
-
-- **[Entity 1]**: [What it represents, key attributes without implementation]
-- **[Entity 2]**: [What it represents, relationships to other entities]
-
-## Success Criteria *(mandatory)*
+### Граничные случаи
 
 <!--
-  ACTION REQUIRED: Define measurable success criteria.
-  These must be technology-agnostic and measurable.
+  ОБЯЗАТЕЛЬНО: замените примеры конкретными граничными случаями.
 -->
 
-### Measurable Outcomes
+- Что происходит при [граничное условие]?
+- Как система обрабатывает [ошибочный сценарий]?
+- Нужно ли инвалидировать кеш после изменения данных, потребляемых ботом?
+- Как сохраняется поведение кнопки «Назад»?
 
-- **SC-001**: [Measurable metric, e.g., "Users can complete account creation in under 2 minutes"]
-- **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
-- **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
-- **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
-
-## Assumptions
+## Требования *(обязательно)*
 
 <!--
-  ACTION REQUIRED: The content in this section represents placeholders.
-  Fill them out with the right assumptions based on reasonable defaults
-  chosen when the feature description did not specify certain details.
+  ОБЯЗАТЕЛЬНО: требования должны быть проверяемыми и технологически
+  нейтральными, если деталь реализации не является частью пользовательского
+  контракта или конституционного ограничения.
 -->
 
-- [Assumption about target users, e.g., "Users have stable internet connectivity"]
-- [Assumption about scope boundaries, e.g., "Mobile support is out of scope for v1"]
-- [Assumption about data/environment, e.g., "Existing authentication system will be reused"]
-- [Dependency on existing system/service, e.g., "Requires access to the existing user profile API"]
+### Функциональные требования
+
+- **FR-001**: Система MUST [конкретная возможность]
+- **FR-002**: Система MUST [правило валидации или ограничение]
+- **FR-003**: Пользователь MUST иметь возможность [ключевое действие]
+- **FR-004**: Система MUST [правило хранения или чтения данных]
+- **FR-005**: Система MUST [поведение при ошибке]
+
+*Пример пометки неясного требования:*
+
+- **FR-006**: Система MUST [NEEDS CLARIFICATION: что именно не указано?]
+
+### Ключевые сущности *(включить, если фича работает с данными)*
+
+- **[Entity 1]**: [Что представляет сущность, ключевые атрибуты без деталей реализации.]
+- **[Entity 2]**: [Связи с другими сущностями.]
+
+## Критерии успеха *(обязательно)*
+
+<!--
+  ОБЯЗАТЕЛЬНО: критерии должны быть измеримыми, технологически нейтральными
+  и проверяемыми без чтения кода.
+-->
+
+### Измеримые результаты
+
+- **SC-001**: [Измеримый результат, например время выполнения пользовательского сценария.]
+- **SC-002**: [Измеримый результат по корректности данных или UX.]
+- **SC-003**: [Измеримый результат по ошибкам, доступности или поддержке.]
+
+## Допущения
+
+<!--
+  ОБЯЗАТЕЛЬНО: перечислите разумные допущения, выбранные при отсутствии
+  деталей в запросе пользователя.
+-->
+
+- [Допущение о пользователях или правах доступа.]
+- [Допущение о границах фичи.]
+- [Допущение о существующих данных, API или окружении.]
