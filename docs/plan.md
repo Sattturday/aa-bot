@@ -196,7 +196,7 @@ data/
 ## Изменения деплоя
 
 - **Dockerfile:** добавить build-зависимости для better-sqlite3, multi-stage build для admin frontend
-- **docker-compose.yml:** порт 3000, volume для `./data:/usr/src/app/data`, новые env vars (`WEBAPP_URL`, `JWT_SECRET`, `ADMIN_IDS`, `PORT`)
+- **docker-compose.yml:** порт 5000, volume для `./data:/usr/src/app/data`, новые env vars (`WEBAPP_URL`, `JWT_SECRET`, `ADMIN_IDS`, `PORT`)
 - **HTTPS:** решим позже (Mini App требует HTTPS, варианты: Caddy, Cloudflare Tunnel, nginx)
 
 ## Новые env-переменные
@@ -205,7 +205,7 @@ data/
 WEBAPP_URL=https://your-domain.com   # URL Mini App
 JWT_SECRET=random-string             # Для подписи JWT
 ADMIN_IDS=341438691                  # Начальные админы (comma-separated)
-PORT=3000                            # Порт Express
+PORT=5000                            # Порт Express
 ```
 
 ## Порядок реализации

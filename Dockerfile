@@ -38,6 +38,7 @@ COPY --from=admin-build /app/admin/dist ./admin/dist
 RUN mkdir -p data
 
 ENV NODE_ENV=production
-EXPOSE 3000
+ENV PORT=5000
+EXPOSE 5000
 
 CMD ["node", "dist/index.js"]

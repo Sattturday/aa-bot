@@ -29,7 +29,7 @@ TG_ID=<admin telegram user id>
 WEBAPP_URL=<https URL for Mini App admin panel>
 JWT_SECRET=<random string for JWT signing>
 ADMIN_IDS=<comma-separated telegram user ids>
-PORT=3000
+PORT=5000
 ```
 
 ## Architecture
@@ -107,7 +107,7 @@ Groups are now managed via the admin Mini App or API. The bot dynamically reads 
 
 ### Deployment
 
-Docker (Node 18 slim). Needs volume mount for `data/` to persist SQLite. Port 3000 for Express. HTTPS required for Telegram Mini App.
+Docker (Node 18 slim). Needs volume mount for `data/` to persist SQLite. Port 5000 for Express. HTTPS required for Telegram Mini App.
 
 ## Recent Changes
 - 004-typed-button-keys: Added TypeScript (strict mode), Node.js 18+ + Telegraf 4.x, Express 5.x

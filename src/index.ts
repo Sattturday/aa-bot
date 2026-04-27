@@ -12,7 +12,7 @@ dotenv.config();
 
 const token = process.env.BOT_TOKEN;
 const tgId = process.env.TG_ID;
-const port = parseInt(process.env.PORT || '3000', 10);
+const port = parseInt(process.env.PORT || '5000', 10);
 const adminIds = process.env.ADMIN_IDS || '';
 
 if (!token || !tgId) {

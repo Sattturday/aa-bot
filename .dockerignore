@@ -1,7 +1,11 @@
 node_modules
+admin/node_modules
 dist
+admin/dist
 dist-tests
 coverage
 .git
 *.log
 .env
+data
+data_ro_backup

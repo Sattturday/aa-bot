@@ -76,7 +76,7 @@ TG_ID=your_telegram_id
 ADMIN_IDS=123456789,987654321
 JWT_SECRET=strong_secret
 WEBAPP_URL=https://your-domain.example
-PORT=3000
+PORT=5000
 ```
 
 Описание:
@@ -86,7 +86,7 @@ PORT=3000
 - `ADMIN_IDS` — дополнительные Telegram ID администраторов через запятую
 - `JWT_SECRET` — секрет для подписи JWT токенов API
 - `WEBAPP_URL` — публичный URL Mini App, который открывается из Telegram
-- `PORT` — порт HTTP-сервера, по умолчанию `3000`
+- `PORT` — порт HTTP-сервера, по умолчанию `5000`
 
 ## Установка
 
@@ -197,6 +197,19 @@ cd admin && npm run lint
 ```bash
 npm run docker_build
 ```
+
+Для локального production-подобного запуска через Compose:
+
+```bash
+docker compose up --build
+```
+
+Что делает текущая конфигурация:
+
+- поднимает один контейнер с ботом, API и раздачей `admin/dist`
+- публикует приложение на порту `5000`
+- сохраняет SQLite-данные через bind mount `./data:/usr/src/app/data`
+- проверяет доступность сервиса через `GET /api/health`
 
 ## Примечания
 
